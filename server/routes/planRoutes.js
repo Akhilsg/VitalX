@@ -3,7 +3,7 @@ const router = express.Router();
 const { GoogleGenerativeAI, SchemaType } = require("@google/generative-ai");
 const axios = require("axios");
 const WorkoutPlan = require("../models/Plan");
-const genAI = new GoogleGenerativeAI("AIzaSyDZctAM4xllUTx0DwqOaGQvv8zQNS0svyA");
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 
 const workoutPlanSchema = {
   type: SchemaType.OBJECT,
@@ -84,7 +84,7 @@ async function fetchExerciseVideo(exerciseName) {
       limit: "1",
     },
     headers: {
-      "X-RapidAPI-Key": "4634d341e8msh3b1d0c5fec09538p11e1edjsnee074da7d6a5",
+      "X-RapidAPI-Key": process.env.X_RAPID_API_KEY,
       "X-RapidAPI-Host": "yt-api.p.rapidapi.com",
     },
   };
