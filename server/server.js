@@ -2,13 +2,14 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+require("dotenv").config();
 
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
 mongoose.connect(
-  "mongodb+srv://learning_pawn:lpc123@cluster0.3ieir.mongodb.net/medi-fitness",
+  `mongodb+srv://${process.env.MONGO_NAME}:${process.env.MONGO_PASSWORD}@cluster0.3ieir.mongodb.net/${process.env.MONGO_CLUSTER}`,
   {
     useNewUrlParser: true,
     useUnifiedTopology: true,
