@@ -1,7 +1,6 @@
 import { SvgIcon } from "@mui/material";
-import React from "react";
 
-export const ArrowDownIcon = (props) => (
+const ArrowDownIcon = (props) => (
   <SvgIcon {...props}>
     <path
       fill="currentColor"
@@ -9,3 +8,5 @@ export const ArrowDownIcon = (props) => (
     />
   </SvgIcon>
 );
+
+export default ArrowDownIcon;

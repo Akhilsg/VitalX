@@ -36,7 +36,7 @@ export const StyledCalendar = styled("div")(({ theme }) => ({
     backgroundColor: "transparent",
   },
   "& .fc .fc-event .fc-event-main": {
-    borderRadius: "6px",
+    borderRadius: "8px",
     "&::before": {
       top: 0,
       left: 0,

@@ -33,44 +33,20 @@ const WorkoutPlanSchema = new mongoose.Schema({
   workoutPreferences: { type: [String] },
   currentActivityLevel: { type: String },
   weeks: [WeekSchema],
-  createdAt: { type: Date, default: Date.now },
-});
-
-const NutritionPlanSchema = new mongoose.Schema({
-  dietaryPreferences: [String],
-  dietaryRestrictions: [String],
-  mealsPerDay: { type: Number, required: true },
-  budget: { type: Number, required: true },
-  allergies: String,
-  mealPlan: [
-    {
-      day: String,
-      meals: [
-        {
-          type: String,
-          name: String,
-          ingredients: [String],
-          macros: {
-            protein: Number,
-            carbs: Number,
-            fats: Number,
-            calories: Number,
-          },
-          recipe: String,
-          estimatedCost: Number,
-        },
-      ],
-    },
-  ],
-  workoutPlanId: {
+  generationProgress: {
+    isGenerating: Boolean,
+    currentChapter: Number,
+    currentTopic: Number,
+    totalTopics: Number,
+    completedTopics: Number,
+  },
+  goalSpecificData: Object,
+  user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "WorkoutPlan",
+    ref: "User",
     required: true,
   },
   createdAt: { type: Date, default: Date.now },
 });
 
-module.exports = {
-  WorkoutPlan: mongoose.model("WorkoutPlan", WorkoutPlanSchema),
-  NutritionPlan: mongoose.model("NutritionPlan", NutritionPlanSchema),
-};
+module.exports = mongoose.model("WorkoutPlan", WorkoutPlanSchema);

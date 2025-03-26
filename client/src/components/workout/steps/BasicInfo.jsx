@@ -1,81 +1,91 @@
-import { Box, TextField } from "@mui/material";
+import { Box } from "@mui/material";
+import { m } from "framer-motion";
 import React from "react";
+import { useForm } from "react-hook-form";
+import { Field } from "../../../common/form";
+import { Form } from "../../../common/form/form-provider";
 
-const BasicInfo = ({
-  formData,
-  setFormData,
-  calculateTotalInches,
-  handleInputChange,
-  errors,
-}) => {
+const BasicInfo = ({ formData, setFormData, calculateTotalInches, errors }) => {
+  const methods = useForm({
+    defaultValues: {
+      age: formData.age || "",
+      weight: formData.weight || "",
+      heightFt: formData.height.ft || "",
+      heightIn: formData.height.in || "",
+    },
+  });
+
+  const { watch } = methods;
+
+  // Watch height changes to update parent state
+  React.useEffect(() => {
+    const subscription = watch((value, { name }) => {
+      if (name?.includes("height")) {
+        const totalInches = calculateTotalInches(
+          value.heightFt,
+          value.heightIn
+        );
+        setFormData((prev) => ({
+          ...prev,
+          height: {
+            ft: value.heightFt,
+            in: value.heightIn,
+          },
+          heightInInches: totalInches,
+        }));
+      } else {
+        setFormData((prev) => ({
+          ...prev,
+          [name]: value[name],
+        }));
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [watch]);
+
   return (
-    <>
-      <TextField
-        label="Age"
-        type="number"
-        value={formData.age}
-        onChange={handleInputChange("age")}
-        error={!!errors.age}
-        helperText={errors.age}
-        margin="normal"
-        fullWidth
-      />
-      <TextField
-        label="Weight (lbs)"
-        type="number"
-        value={formData.weight}
-        onChange={handleInputChange("weight")}
-        error={!!errors.weight}
-        helperText={errors.weight}
-        margin="normal"
-        fullWidth
-      />
-      <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
-        <TextField
-          label="Height (ft)"
-          type="number"
-          margin="normal"
-          value={formData.height.ft}
-          onChange={(e) => {
-            const newFt = e.target.value;
-            const totalInches = calculateTotalInches(newFt, formData.height.in);
-            setFormData({
-              ...formData,
-              height: {
-                ft: newFt,
-                in: formData.height.in,
-              },
-              heightInInches: totalInches,
-            });
-          }}
-          error={!!errors.height}
-          helperText={errors.height}
-          slotProps={{ input: { inputProps: { min: 3, max: 8 } } }}
-          fullWidth
-        />
-        <TextField
-          label="Height (in)"
-          type="number"
-          margin="normal"
-          value={formData.height.in}
-          onChange={(e) => {
-            const newIn = e.target.value;
-            const totalInches = calculateTotalInches(formData.height.ft, newIn);
-            setFormData({
-              ...formData,
-              height: {
-                ft: formData.height.ft,
-                in: newIn,
-              },
-              heightInInches: totalInches,
-            });
-          }}
-          error={!!errors.height}
-          slotProps={{ input: { inputProps: { min: 0, max: 11 } } }}
-          fullWidth
-        />
-      </Box>
-    </>
+    <Box
+      component={m.div}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Form methods={methods}>
+        <Box sx={{ display: "grid", gap: 3 }}>
+          <Field.Text
+            name="age"
+            label="Age"
+            type="number"
+            helperText={errors.age}
+          />
+
+          <Field.Text
+            name="weight"
+            label="Weight (lbs)"
+            type="number"
+            helperText={errors.weight}
+          />
+
+          <Box sx={{ display: "flex", gap: 3 }}>
+            <Field.Text
+              name="heightFt"
+              label="Height (ft)"
+              type="number"
+              helperText={errors.height}
+              InputProps={{ inputProps: { min: 3, max: 8 } }}
+            />
+
+            <Field.Text
+              name="heightIn"
+              label="Height (in)"
+              type="number"
+              InputProps={{ inputProps: { min: 0, max: 11 } }}
+            />
+          </Box>
+        </Box>
+      </Form>
+    </Box>
   );
 };
 

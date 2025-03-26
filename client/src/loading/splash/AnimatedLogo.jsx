@@ -1,8 +1,8 @@
-import { Box, Portal } from "@mui/material";
-import { m } from "framer-motion";
 import { Icon } from "@iconify/react/dist/iconify.js";
+import { Box } from "@mui/material";
+import { m } from "framer-motion";
 
-const AnimatedLogo = ({ logo, sx, ...other }) => {
+const AnimatedLogo = () => {
   return (
     <Box
       sx={{
@@ -12,9 +12,7 @@ const AnimatedLogo = ({ logo, sx, ...other }) => {
         position: "relative",
         display: "inline-flex",
         justifyContent: "center",
-        ...sx,
       }}
-      {...other}
     >
       <Box
         component={m.div}
@@ -27,7 +25,12 @@ const AnimatedLogo = ({ logo, sx, ...other }) => {
         }}
         sx={{ display: "inline-flex" }}
       >
-        <Icon icon="solar:dumbbell-large-minimalistic-broken" color="rgba(6 59 167 / 0.5)" width="64" height="64" />
+        <Icon
+          icon="solar:dumbbell-large-minimalistic-broken"
+          color="#0C68E9"
+          width="64"
+          height="64"
+        />
       </Box>
 
       <Box
@@ -67,33 +70,4 @@ const AnimatedLogo = ({ logo, sx, ...other }) => {
   );
 };
 
-const LoadingScreen = ({ portal = true }) => {
-  const content = (
-    <Box sx={{ overflow: "hidden" }}>
-      <Box
-        sx={{
-          right: 0,
-          width: 1,
-          bottom: 0,
-          height: 1,
-          zIndex: 9998,
-          display: "flex",
-          position: "fixed",
-          alignItems: "center",
-          justifyContent: "center",
-          bgcolor: "background.default",
-        }}
-      >
-        <AnimatedLogo />
-      </Box>
-    </Box>
-  );
-
-  if (portal) {
-    return <Portal>{content}</Portal>;
-  }
-
-  return content;
-};
-
-export default LoadingScreen;
+export default AnimatedLogo;
