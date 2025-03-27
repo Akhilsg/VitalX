@@ -28,11 +28,6 @@ export function RHFTextField({ name, helperText, type, ...other }) {
             htmlInput: {
               autoComplete: "off",
             },
-            input: {
-              sx: {
-                borderRadius: "16px",
-              },
-            },
           }}
           {...other}
         />

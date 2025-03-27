@@ -46,7 +46,6 @@ const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const router = useRouter();
   const password = useBoolean();
 
   const methods = useForm({
@@ -67,7 +66,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/users/login",
+        "http://localhost:8000/api/users/login",
         data
       );
 
@@ -177,7 +176,7 @@ const Login = () => {
                 size="large"
                 type="submit"
                 variant="contained"
-                loading={isSubmitting}
+                loading={isSubmitting}  
                 loadingIndicator="Sign in..."
               >
                 Sign in

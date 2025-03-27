@@ -348,7 +348,7 @@ const WorkoutPlan = () => {
 
     try {
       const createResponse = await axios.post(
-        "http://localhost:5000/api/plans/create",
+        "http://localhost:8000/api/plans/create",
         {
           age: formData.age,
           weight: formData.weight,

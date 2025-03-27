@@ -31,5 +31,5 @@ app.use("/api/plans", planRoutes);
 app.use("/api/progress", progressRoutes);
 app.use("/api/analytics", analyticsRoutes);
 
-const PORT = 5000;
+const PORT = 8000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

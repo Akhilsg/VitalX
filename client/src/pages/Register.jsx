@@ -1,52 +1,86 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Icon } from "@iconify/react/dist/iconify.js";
+import { LoadingButton } from "@mui/lab";
 import {
+  Alert,
   Box,
-  Button,
-  Card,
-  CardContent,
-  CardMedia,
-  TextField,
+  IconButton,
+  InputAdornment,
+  Link,
+  Stack,
   Typography,
+  useTheme,
 } from "@mui/material";
 import axios from "axios";
-import React, { useState } from "react";
+import React from "react";
+import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { z as zod } from "zod";
+import { Field } from "../common/form";
+import { Form } from "../common/form/form-provider";
+import { RouterLink } from "../common/router-link";
+import Section from "../components/AuthSection";
+import { useBoolean } from "../hooks/use-boolean";
 import {
+  registerFailure,
   registerStart,
   registerSuccess,
-  registerFailure,
 } from "../redux/slices/authSlice";
-import registerImage from "../assets/register.png";
-import Section from "../components/AuthSection";
+
+const RegisterSchema = zod.object({
+  fName: zod.string().min(1, { message: "First name is required!" }),
+  lName: zod.string().min(1, { message: "Last name is required!" }),
+  email: zod
+    .string()
+    .min(1, { message: "Email is required!" })
+    .email({ message: "Email must be a valid email address!" }),
+  password: zod
+    .string()
+    .min(1, { message: "Password is required!" })
+    .min(6, { message: "Password must be at least 6 characters!" }),
+});
 
 const Register = () => {
+  const { error } = useSelector((state) => state.auth);
+
+  const theme = useTheme();
   const dispatch = useDispatch();
-  const [fName, setFName] = useState("");
-  const [lName, setLName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const { loading, error } = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
-  const handleRegister = async (e) => {
-    e.preventDefault();
+  const password = useBoolean();
+
+  const methods = useForm({
+    resolver: zodResolver(RegisterSchema),
+    defaultValues: {
+      fName: "",
+      lName: "",
+      email: "",
+      password: "",
+    },
+  });
+
+  const {
+    handleSubmit,
+    formState: { isSubmitting },
+  } = methods;
+
+  const onSubmit = handleSubmit(async (data) => {
     dispatch(registerStart());
 
     try {
-      await axios.post("http://localhost:5000/api/users/register", {
-        fName,
-        lName,
-        email,
-        password,
-      });
+      await axios.post("http://localhost:8000/api/users/register", data);
       dispatch(registerSuccess());
+      toast.success("Registered successfully");
       navigate("/login");
     } catch (error) {
+      console.log(error);
       dispatch(
         registerFailure(error.response?.data?.message || "Error registering")
       );
     }
-  };
+  });
 
   return (
     <Box
@@ -71,70 +105,110 @@ const Register = () => {
         }}
       >
         <Box sx={{ width: "450px" }}>
-          <Typography component="h1" variant="h5">
-            Register
-          </Typography>
-          {error && <Typography color="error">{error}</Typography>}
-          <Box sx={{ display: "flex", justifyContent: "center", gap: 3 }}>
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              autoFocus
-              id="fName"
-              label="First Name"
-              name="fName"
-              autoComplete="fName"
-              value={fName}
-              onChange={(e) => setFName(e.target.value)}
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              autoFocus
-              id="lName"
-              label="Last Name"
-              name="lName"
-              autoComplete="lName"
-              value={lName}
-              onChange={(e) => setLName(e.target.value)}
-            />
-          </Box>
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            autoFocus
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="new-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <Box sx={{ mt: 2 }}>
-            <Button
-              fullWidth
-              type="submit"
-              variant="contained"
-              disabled={loading}
-            >
-              Register
-            </Button>
-          </Box>
+          <Stack spacing={1.5} sx={{ mb: 5 }}>
+            <Typography variant="h5">Get started absolutely free</Typography>
+
+            <Stack direction="row" spacing={0.5}>
+              <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                {`Already have an account?`}
+              </Typography>
+
+              <Link component={RouterLink} href="/login" variant="subtitle2">
+                Login
+              </Link>
+            </Stack>
+          </Stack>
+
+          {!!error && (
+            <Alert severity="error" sx={{ mb: 3 }}>
+              {error}
+            </Alert>
+          )}
+
+          <Form methods={methods} onSubmit={onSubmit}>
+            <Stack spacing={3}>
+              <Stack direction="row" spacing={2}>
+                <Field.Text
+                  name="fName"
+                  label="First Name"
+                  InputLabelProps={{ shrink: true }}
+                />
+                <Field.Text
+                  name="lName"
+                  label="Last Name"
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Stack>
+              <Field.Text
+                name="email"
+                label="Email address"
+                InputLabelProps={{ shrink: true }}
+              />
+              <Field.Text
+                name="password"
+                label="Password"
+                placeholder="6+ characters"
+                type={password.value ? "text" : "password"}
+                InputLabelProps={{ shrink: true }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton onClick={password.onToggle} edge="end">
+                        <Icon
+                          icon={
+                            password.value
+                              ? "solar:eye-bold"
+                              : "solar:eye-closed-bold"
+                          }
+                        />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+              <LoadingButton
+                fullWidth
+                color="inherit"
+                size="large"
+                type="submit"
+                variant="contained"
+                loading={isSubmitting}
+                loadingIndicator="Registering..."
+              >
+                Create Account
+              </LoadingButton>
+              <Box
+                component={Typography}
+                variant="caption"
+                color="text.secondary"
+                align="center"
+              >
+                By signing up, I agree to{" "}
+                <Link
+                  color="textPrimary"
+                  underline="hover"
+                  sx={{
+                    textDecoration: "underline",
+                    textDecorationColor: theme.palette.action.disabled,
+                  }}
+                >
+                  Terms of service
+                </Link>
+                &nbsp;and&nbsp;
+                <Link
+                  color="textPrimary"
+                  underline="hover"
+                  sx={{
+                    textDecoration: "underline",
+                    textDecorationColor: theme.palette.action.disabled,
+                  }}
+                >
+                  Privacy Policy
+                </Link>
+                .
+              </Box>
+            </Stack>
+          </Form>
         </Box>
       </Box>
     </Box>

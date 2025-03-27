@@ -93,7 +93,7 @@ const Dashboard = () => {
 
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/plans/workout/${user.id}`
+          `http://localhost:8000/api/plans/workout/${user.id}`
         );
         setPlan(response.data);
 
@@ -114,7 +114,7 @@ const Dashboard = () => {
       dispatch(initializeProgressStart());
       axios
         .get(
-          `http://localhost:5000/api/progress/initialize/${user.id}/${plan._id}`
+          `http://localhost:8000/api/progress/initialize/${user.id}/${plan._id}`
         )
         .then((res) => {
           const { userProgress } = res.data;
@@ -227,7 +227,7 @@ const Dashboard = () => {
 
     try {
       const response = await axios.patch(
-        `http://localhost:5000/api/progress/update-set/${user.id}`,
+        `http://localhost:8000/api/progress/update-set/${user.id}`,
         {
           planId: plan._id,
           eventId,
@@ -267,7 +267,7 @@ const Dashboard = () => {
 
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/progress/mark-complete/${user.id}`,
+        `http://localhost:8000/api/progress/mark-complete/${user.id}`,
         {
           planId: plan._id,
           eventId,
@@ -538,7 +538,6 @@ const Dashboard = () => {
             </StyledCalendar>
           </Card>
 
-          {/* Drawer that shows the selected event's exercises/sets */}
           <WorkoutDrawer
             open={dialogOpen}
             onClose={() => setDialogOpen(false)}
