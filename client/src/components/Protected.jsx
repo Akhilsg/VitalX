@@ -8,9 +8,12 @@ const Protected = () => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:8000/api/users/protected", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await axios.get(
+          `${process.env.REACT_APP_API_URL}/api/users/protected`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         setMessage(response.data.message);
       } catch (error) {
         setMessage("Unauthorized");

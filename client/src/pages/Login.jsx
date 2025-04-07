@@ -66,7 +66,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/users/login",
+        "${process.env.REACT_APP_API_URL}/api/users/login",
         data
       );
 
@@ -176,7 +176,7 @@ const Login = () => {
                 size="large"
                 type="submit"
                 variant="contained"
-                loading={isSubmitting}  
+                loading={isSubmitting}
                 loadingIndicator="Sign in..."
               >
                 Sign in

@@ -30,7 +30,7 @@ const GenerationStatus = ({ workoutId, workoutDays, onShowPlan }) => {
   const handleStartGeneration = () => {
     try {
       const eventSource = new EventSource(
-        `http://localhost:8000/api/plans/generate/${workoutId}`
+        `${process.env.REACT_APP_API_URL}/api/plans/generate/${workoutId}`
       );
 
       setStatus((prev) => ({ ...prev, isGenerating: true }));

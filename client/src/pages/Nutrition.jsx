@@ -70,7 +70,7 @@ const Nutrition = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `http://localhost:8000/api/nutrition/user/${user.id}`
+        `${process.env.REACT_APP_API_URL}/api/nutrition/user/${user.id}`
       );
       setNutritionPlan(response.data);
       setPreferences(
@@ -99,7 +99,7 @@ const Nutrition = () => {
   const createNewPlan = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/nutrition/create",
+        "${process.env.REACT_APP_API_URL}/api/nutrition/create",
         {
           userId: user.id,
           preferences,
@@ -116,7 +116,7 @@ const Nutrition = () => {
   const savePreferences = async () => {
     try {
       await axios.put(
-        `http://localhost:8000/api/nutrition/preferences/${user.id}`,
+        `${process.env.REACT_APP_API_URL}/api/nutrition/preferences/${user.id}`,
         preferences
       );
       toast.success("Preferences saved successfully");
@@ -134,7 +134,7 @@ const Nutrition = () => {
       const workoutPlanId = workoutResponse.data?._id;
 
       const response = await axios.post(
-        `http://localhost:8000/api/nutrition/generate/${user.id}`,
+        `${process.env.REACT_APP_API_URL}/api/nutrition/generate/${user.id}`,
         { workoutPlanId }
       );
       setNutritionPlan(response.data);
