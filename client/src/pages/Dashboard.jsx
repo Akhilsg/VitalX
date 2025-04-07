@@ -95,7 +95,7 @@ const Dashboard = () => {
 
       try {
         const response = await axios.get(
-          `${baseUrl}/api/plans/workout/${user.id}`
+          `https://vitalx-backend.onrender.com/api/plans/workout/${user.id}`
         );
         setPlan(response.data);
 
@@ -115,7 +115,9 @@ const Dashboard = () => {
     if (plan) {
       dispatch(initializeProgressStart());
       axios
-        .get(`${baseUrl}/api/progress/initialize/${user.id}/${plan._id}`)
+        .get(
+          `https://vitalx-backend.onrender.com/api/progress/initialize/${user.id}/${plan._id}`
+        )
         .then((res) => {
           const { userProgress } = res.data;
           const tracking = {};
@@ -227,7 +229,7 @@ const Dashboard = () => {
 
     try {
       const response = await axios.patch(
-        `${baseUrl}/api/progress/update-set/${user.id}`,
+        `https://vitalx-backend.onrender.com/api/progress/update-set/${user.id}`,
         {
           planId: plan._id,
           eventId,
@@ -267,7 +269,7 @@ const Dashboard = () => {
 
     try {
       const response = await axios.post(
-        `${baseUrl}/api/progress/mark-complete/${user.id}`,
+        `https://vitalx-backend.onrender.com/api/progress/mark-complete/${user.id}`,
         {
           planId: plan._id,
           eventId,

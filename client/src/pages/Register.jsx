@@ -71,7 +71,10 @@ const Register = () => {
 
     try {
       const baseUrl = process.env.REACT_APP_API_URL;
-      await axios.post(`${baseUrl}/api/users/register`, data);
+      await axios.post(
+        `https://vitalx-backend.onrender.com/api/users/register`,
+        data
+      );
       dispatch(registerSuccess());
       toast.success("Registered successfully");
       navigate("/login");

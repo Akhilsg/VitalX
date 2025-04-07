@@ -10,7 +10,7 @@ const Protected = () => {
         const token = localStorage.getItem("token");
         const baseUrl = process.env.REACT_APP_API_URL;
         const response = await axios.get(
-          `${baseUrl}/api/users/protected`,
+          `https://vitalx-backend.onrender.com/api/users/protected`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }

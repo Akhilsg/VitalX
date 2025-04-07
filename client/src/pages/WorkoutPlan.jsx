@@ -348,23 +348,26 @@ const WorkoutPlan = () => {
 
     try {
       const baseUrl = process.env.REACT_APP_API_URL;
-      const createResponse = await axios.post(`${baseUrl}/api/plans/create`, {
-        age: formData.age,
-        weight: formData.weight,
-        heightInInches: calculateTotalInches(
-          formData.height.ft,
-          formData.height.in
-        ),
-        goal: formData.goal,
-        gymAccess: formData.gymAccess,
-        experienceLevel: formData.experienceLevel,
-        workoutDays: formData.workoutDays,
-        motivation: formData.motivation,
-        workoutPreferences: formData.workoutPreferences,
-        currentActivityLevel: formData.currentActivityLevel,
-        userId: user.id,
-        goalSpecificData: formData.goalSpecificData || {},
-      });
+      const createResponse = await axios.post(
+        `https://vitalx-backend.onrender.com/api/plans/create`,
+        {
+          age: formData.age,
+          weight: formData.weight,
+          heightInInches: calculateTotalInches(
+            formData.height.ft,
+            formData.height.in
+          ),
+          goal: formData.goal,
+          gymAccess: formData.gymAccess,
+          experienceLevel: formData.experienceLevel,
+          workoutDays: formData.workoutDays,
+          motivation: formData.motivation,
+          workoutPreferences: formData.workoutPreferences,
+          currentActivityLevel: formData.currentActivityLevel,
+          userId: user.id,
+          goalSpecificData: formData.goalSpecificData || {},
+        }
+      );
 
       setTimeout(() => {
         setWorkoutId(createResponse.data.id);

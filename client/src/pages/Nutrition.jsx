@@ -71,7 +71,7 @@ const Nutrition = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `${baseUrl}/api/nutrition/user/${user.id}`
+        `https://vitalx-backend.onrender.com/api/nutrition/user/${user.id}`
       );
       setNutritionPlan(response.data);
       setPreferences(
@@ -99,10 +99,13 @@ const Nutrition = () => {
 
   const createNewPlan = async () => {
     try {
-      const response = await axios.post(`${baseUrl}/api/nutrition/create`, {
-        userId: user.id,
-        preferences,
-      });
+      const response = await axios.post(
+        `https://vitalx-backend.onrender.com/api/nutrition/create`,
+        {
+          userId: user.id,
+          preferences,
+        }
+      );
       setNutritionPlan(response.data);
       setLoading(false);
     } catch (error) {
@@ -114,7 +117,7 @@ const Nutrition = () => {
   const savePreferences = async () => {
     try {
       await axios.put(
-        `${baseUrl}/api/nutrition/preferences/${user.id}`,
+        `https://vitalx-backend.onrender.com/api/nutrition/preferences/${user.id}`,
         preferences
       );
       toast.success("Preferences saved successfully");
@@ -132,7 +135,7 @@ const Nutrition = () => {
       const workoutPlanId = workoutResponse.data?._id;
 
       const response = await axios.post(
-        `${baseUrl}/api/nutrition/generate/${user.id}`,
+        `https://vitalx-backend.onrender.com/api/nutrition/generate/${user.id}`,
         { workoutPlanId }
       );
       setNutritionPlan(response.data);
