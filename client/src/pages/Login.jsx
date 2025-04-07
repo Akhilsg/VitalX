@@ -40,6 +40,8 @@ const SignInSchema = zod.object({
     .min(6, { message: "Password must be at least 6 characters!" }),
 });
 
+const baseUrl = process.env.REACT_APP_API_URL;
+
 const Login = () => {
   const { error } = useSelector((state) => state.auth);
 
@@ -66,7 +68,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        "${process.env.REACT_APP_API_URL}/api/users/login",
+        `${process.env.REACT_APP_API_URL}/api/users/login`,
         data
       );
 

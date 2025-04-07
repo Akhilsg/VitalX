@@ -8,8 +8,9 @@ const Protected = () => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem("token");
+        const baseUrl = process.env.REACT_APP_API_URL;
         const response = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/users/protected`,
+          `${baseUrl}/api/users/protected`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }

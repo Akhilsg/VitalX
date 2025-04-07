@@ -16,6 +16,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 const TOTAL_WEEKS = 4;
+const baseUrl = process.env.REACT_APP_API_URL;
 
 const GenerationStatus = ({ workoutId, workoutDays, onShowPlan }) => {
   const theme = useTheme();
@@ -30,7 +31,7 @@ const GenerationStatus = ({ workoutId, workoutDays, onShowPlan }) => {
   const handleStartGeneration = () => {
     try {
       const eventSource = new EventSource(
-        `${process.env.REACT_APP_API_URL}/api/plans/generate/${workoutId}`
+        `${baseUrl}/api/plans/generate/${workoutId}`
       );
 
       setStatus((prev) => ({ ...prev, isGenerating: true }));

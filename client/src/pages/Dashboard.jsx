@@ -38,6 +38,8 @@ import {
   updateSetSuccess,
 } from "../redux/slices/progressSlice";
 
+const baseUrl = baseUrl;
+
 const Dashboard = () => {
   const theme = useTheme();
 
@@ -93,7 +95,7 @@ const Dashboard = () => {
 
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/plans/workout/${user.id}`
+          `${baseUrl}/api/plans/workout/${user.id}`
         );
         setPlan(response.data);
 
@@ -113,9 +115,7 @@ const Dashboard = () => {
     if (plan) {
       dispatch(initializeProgressStart());
       axios
-        .get(
-          `${process.env.REACT_APP_API_URL}/api/progress/initialize/${user.id}/${plan._id}`
-        )
+        .get(`${baseUrl}/api/progress/initialize/${user.id}/${plan._id}`)
         .then((res) => {
           const { userProgress } = res.data;
           const tracking = {};
@@ -227,7 +227,7 @@ const Dashboard = () => {
 
     try {
       const response = await axios.patch(
-        `${process.env.REACT_APP_API_URL}/api/progress/update-set/${user.id}`,
+        `${baseUrl}/api/progress/update-set/${user.id}`,
         {
           planId: plan._id,
           eventId,
@@ -267,7 +267,7 @@ const Dashboard = () => {
 
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/progress/mark-complete/${user.id}`,
+        `${baseUrl}/api/progress/mark-complete/${user.id}`,
         {
           planId: plan._id,
           eventId,
