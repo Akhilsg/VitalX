@@ -19,6 +19,7 @@ import { useTheme } from "@mui/material";
 
 import { PreferencesForm } from "../components/nutrition/PreferencesForm";
 import { MealCardWrapper } from "../components/nutrition/MealPlan";
+const baseUrl = baseUrl;
 
 const Nutrition = () => {
   const theme = useTheme();
@@ -70,7 +71,7 @@ const Nutrition = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/api/nutrition/user/${user.id}`
+        `${baseUrl}/api/nutrition/user/${user.id}`
       );
       setNutritionPlan(response.data);
       setPreferences(
@@ -98,13 +99,10 @@ const Nutrition = () => {
 
   const createNewPlan = async () => {
     try {
-      const response = await axios.post(
-        "${process.env.REACT_APP_API_URL}/api/nutrition/create",
-        {
-          userId: user.id,
-          preferences,
-        }
-      );
+      const response = await axios.post(`${baseUrl}/api/nutrition/create`, {
+        userId: user.id,
+        preferences,
+      });
       setNutritionPlan(response.data);
       setLoading(false);
     } catch (error) {
@@ -116,7 +114,7 @@ const Nutrition = () => {
   const savePreferences = async () => {
     try {
       await axios.put(
-        `${process.env.REACT_APP_API_URL}/api/nutrition/preferences/${user.id}`,
+        `${baseUrl}/api/nutrition/preferences/${user.id}`,
         preferences
       );
       toast.success("Preferences saved successfully");
@@ -134,7 +132,7 @@ const Nutrition = () => {
       const workoutPlanId = workoutResponse.data?._id;
 
       const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/nutrition/generate/${user.id}`,
+        `${baseUrl}/api/nutrition/generate/${user.id}`,
         { workoutPlanId }
       );
       setNutritionPlan(response.data);

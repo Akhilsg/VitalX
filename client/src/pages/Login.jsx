@@ -67,10 +67,7 @@ const Login = () => {
     dispatch(loginStart());
 
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/users/login`,
-        data
-      );
+      const response = await axios.post(`${baseUrl}/api/users/login`, data);
 
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.user));

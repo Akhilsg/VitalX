@@ -70,10 +70,8 @@ const Register = () => {
     dispatch(registerStart());
 
     try {
-      await axios.post(
-        `${process.env.REACT_APP_API_URL}/api/users/register`,
-        data
-      );
+      const baseUrl = process.env.REACT_APP_API_URL;
+      await axios.post(`${baseUrl}/api/users/register`, data);
       dispatch(registerSuccess());
       toast.success("Registered successfully");
       navigate("/login");
