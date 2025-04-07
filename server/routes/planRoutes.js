@@ -1,11 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const { GoogleGenerativeAI, SchemaType } = require("@google/generative-ai");
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 
 const db = require("../models");
 const WorkoutPlan = db.workout;
-const NutritionPlan = db.nutrition;
 
 const googleKeys = [
   process.env.GOOGLE_API_KEY_0,
@@ -89,7 +87,6 @@ router.use(function (req, res, next) {
   next();
 });
 
-
 router.post("/create", async (req, res) => {
   const { userId } = req.body;
   try {
@@ -108,7 +105,6 @@ router.post("/create", async (req, res) => {
     return;
   }
 });
-
 
 router.get("/generate/:workoutId", async (req, res) => {
   const workoutId = req.params.workoutId;
@@ -143,7 +139,6 @@ router.get("/generate/:workoutId", async (req, res) => {
       for (let dayIndex = 0; dayIndex < availableDays.length; dayIndex++) {
         const day = availableDays[dayIndex];
 
-        
         res.write(
           `data: ${JSON.stringify({
             type: "progress",
@@ -162,7 +157,6 @@ router.get("/generate/:workoutId", async (req, res) => {
           })}\n\n`
         );
 
-        
         const prompt = `
           Generate a workout plan for Week ${weekIndex + 1}, ${day} considering:
           Age: ${workout.age}
@@ -177,21 +171,53 @@ router.get("/generate/:workoutId", async (req, res) => {
           Current Activity Level: ${workout.currentActivityLevel}
           
           GOAL SPECIFIC INSTRUCTIONS:
-          ${workout.goal.includes("weight-loss") ? "- Include exercises that maximize calorie burn and fat loss" : ""}
-          ${workout.goal.includes("muscle-gain") ? "- Focus on progressive overload and hypertrophy training" : ""}
-          ${workout.goal.includes("strength") ? "- Prioritize compound movements and strength development" : ""}
-          ${workout.goal.includes("endurance") ? "- Include exercises that build cardiovascular and muscular endurance" : ""}
-          ${workout.goal.includes("general-fitness") ? "- Create a balanced workout with variety" : ""}
-          ${workout.goal.includes("rehabilitation") ? "- Include gentle, rehabilitative exercises that promote recovery" : ""}
-          ${workout.goal.includes("sport-specific") ? "- Focus on exercises that enhance athletic performance" : ""}
-          ${workout.goal.includes("stress-relief") ? "- Prioritize mindful movement, yoga, and low-intensity exercises that reduce stress" : ""}
+          ${
+            workout.goal.includes("weight-loss")
+              ? "- Include exercises that maximize calorie burn and fat loss"
+              : ""
+          }
+          ${
+            workout.goal.includes("muscle-gain")
+              ? "- Focus on progressive overload and hypertrophy training"
+              : ""
+          }
+          ${
+            workout.goal.includes("strength")
+              ? "- Prioritize compound movements and strength development"
+              : ""
+          }
+          ${
+            workout.goal.includes("endurance")
+              ? "- Include exercises that build cardiovascular and muscular endurance"
+              : ""
+          }
+          ${
+            workout.goal.includes("general-fitness")
+              ? "- Create a balanced workout with variety"
+              : ""
+          }
+          ${
+            workout.goal.includes("rehabilitation")
+              ? "- Include gentle, rehabilitative exercises that promote recovery"
+              : ""
+          }
+          ${
+            workout.goal.includes("sport-specific")
+              ? "- Focus on exercises that enhance athletic performance"
+              : ""
+          }
+          ${
+            workout.goal.includes("stress-relief")
+              ? "- Prioritize mindful movement, yoga, and low-intensity exercises that reduce stress"
+              : ""
+          }
           
           ${getGoalSpecificPrompt(workout.goalSpecificData, workout.goal)}
           
           Include a progressive overload strategy appropriate for the selected goals.
         `;
 
-        const dayPlan = await generateDayPlan(prompt, weekExercises, workout);  // Pass workout as parameter
+        const dayPlan = await generateDayPlan(prompt, weekExercises, workout); // Pass workout as parameter
         weekExercises = [...weekExercises, ...dayPlan.exercises];
         weekPlan.days.push({ day, ...dayPlan });
 
@@ -203,7 +229,6 @@ router.get("/generate/:workoutId", async (req, res) => {
           { $set: { generationProgress: workout.generationProgress } }
         );
 
-        
         res.write(
           `data: ${JSON.stringify({
             type: "dayComplete",
@@ -237,76 +262,101 @@ router.get("/generate/:workoutId", async (req, res) => {
   res.end();
 });
 
-
 function getGoalSpecificPrompt(goalSpecificData, goals) {
   if (!goalSpecificData) return "";
-  
+
   let prompts = [];
-  
+
   if (goals.includes("weight-loss") && goalSpecificData.weightLossSpeed) {
     prompts.push(`Weight Loss Speed: ${goalSpecificData.weightLossSpeed}`);
-    prompts.push(`Weight Loss Training Preference: ${goalSpecificData.weightLossPreference || "balanced"}`);
+    prompts.push(
+      `Weight Loss Training Preference: ${
+        goalSpecificData.weightLossPreference || "balanced"
+      }`
+    );
   }
-  
+
   if (goals.includes("muscle-gain") && goalSpecificData.priorityMuscles) {
-    prompts.push(`Priority Muscle Groups: ${goalSpecificData.priorityMuscles.join(", ")}`);
+    prompts.push(
+      `Priority Muscle Groups: ${goalSpecificData.priorityMuscles.join(", ")}`
+    );
   }
-  
+
   if (goals.includes("strength") && goalSpecificData.strengthFocus) {
-    prompts.push(`Strength Focus Lifts: ${goalSpecificData.strengthFocus.join(", ")}`);
+    prompts.push(
+      `Strength Focus Lifts: ${goalSpecificData.strengthFocus.join(", ")}`
+    );
   }
-  
+
   if (goals.includes("endurance") && goalSpecificData.enduranceType) {
     prompts.push(`Endurance Type: ${goalSpecificData.enduranceType}`);
     if (goalSpecificData.currentEndurance) {
-      prompts.push(`Current Endurance Level: ${goalSpecificData.currentEndurance} minutes`);
+      prompts.push(
+        `Current Endurance Level: ${goalSpecificData.currentEndurance} minutes`
+      );
     }
   }
-  
+
   if (goals.includes("sport-specific")) {
-    const sport = goalSpecificData.sport === "other" 
-      ? goalSpecificData.otherSport 
-      : goalSpecificData.sport;
-    
+    const sport =
+      goalSpecificData.sport === "other"
+        ? goalSpecificData.otherSport
+        : goalSpecificData.sport;
+
     if (sport) {
       prompts.push(`Sport: ${sport}`);
     }
-    
+
     if (goalSpecificData.sportAspects) {
-      prompts.push(`Sport Performance Aspects: ${goalSpecificData.sportAspects.join(", ")}`);
+      prompts.push(
+        `Sport Performance Aspects: ${goalSpecificData.sportAspects.join(", ")}`
+      );
     }
   }
-  
+
   if (goals.includes("rehabilitation")) {
-    const rehabArea = goalSpecificData.rehabArea === "other"
-      ? goalSpecificData.otherRehabArea
-      : goalSpecificData.rehabArea;
-    
+    const rehabArea =
+      goalSpecificData.rehabArea === "other"
+        ? goalSpecificData.otherRehabArea
+        : goalSpecificData.rehabArea;
+
     if (rehabArea) {
       prompts.push(`Rehabilitation Area: ${rehabArea}`);
     }
-    
+
     if (goalSpecificData.medicalClearance) {
       prompts.push(`Medical Clearance: ${goalSpecificData.medicalClearance}`);
     }
   }
-  
+
   if (goals.includes("stress-relief") && goalSpecificData.relaxingActivities) {
-    prompts.push(`Preferred Relaxing Activities: ${goalSpecificData.relaxingActivities.join(", ")}`);
+    prompts.push(
+      `Preferred Relaxing Activities: ${goalSpecificData.relaxingActivities.join(
+        ", "
+      )}`
+    );
     if (goalSpecificData.stressReliefTime) {
-      prompts.push(`Preferred Session Duration: ${goalSpecificData.stressReliefTime}`);
+      prompts.push(
+        `Preferred Session Duration: ${goalSpecificData.stressReliefTime}`
+      );
     }
   }
-  
+
   if (goals.includes("general-fitness")) {
     if (goalSpecificData.fitnessAspects) {
-      prompts.push(`Important Fitness Aspects: ${goalSpecificData.fitnessAspects.join(", ")}`);
+      prompts.push(
+        `Important Fitness Aspects: ${goalSpecificData.fitnessAspects.join(
+          ", "
+        )}`
+      );
     }
     if (goalSpecificData.currentRoutine) {
-      prompts.push(`Current Fitness Routine: ${goalSpecificData.currentRoutine}`);
+      prompts.push(
+        `Current Fitness Routine: ${goalSpecificData.currentRoutine}`
+      );
     }
   }
-  
+
   return prompts.join("\n");
 }
 let currentGoogleKeyIndex = 0;
@@ -323,7 +373,8 @@ function getNextGoogleKey() {
   return key;
 }
 
-const generateDayPlan = async (prompt, previousExercises, workout) => {  // Add workout parameter
+const generateDayPlan = async (prompt, previousExercises, workout) => {
+  // Add workout parameter
   const currentKey = getNextGoogleKey();
   const genAI = new GoogleGenerativeAI(currentKey);
 
@@ -373,95 +424,6 @@ router.get("/status/:workoutId", async (req, res) => {
     totalDays: workout.generationProgress.totalDays,
     completedDays: workout.generationProgress.completedDays,
   });
-});
-
-router.post("/nutrition/generate", async (req, res) => {
-  const { nutritionData, workoutGoals } = req.body;
-
-  const nutritionPlanSchema = {
-    type: SchemaType.OBJECT,
-    properties: {
-      mealPlan: {
-        type: SchemaType.ARRAY,
-        items: {
-          type: SchemaType.OBJECT,
-          properties: {
-            day: { type: SchemaType.STRING },
-            meals: {
-              type: SchemaType.ARRAY,
-              items: {
-                type: SchemaType.OBJECT,
-                properties: {
-                  type: { type: SchemaType.STRING },
-                  name: { type: SchemaType.STRING },
-                  ingredients: {
-                    type: SchemaType.ARRAY,
-                    items: { type: SchemaType.STRING },
-                  },
-                  macros: {
-                    type: SchemaType.OBJECT,
-                    properties: {
-                      protein: { type: SchemaType.NUMBER },
-                      carbs: { type: SchemaType.NUMBER },
-                      fats: { type: SchemaType.NUMBER },
-                      calories: { type: SchemaType.NUMBER },
-                    },
-                  },
-                  recipe: { type: SchemaType.STRING },
-                  estimatedCost: { type: SchemaType.NUMBER },
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  };
-
-  const prompt = `
-    Create a 7-day meal plan considering:
-    Dietary Preferences: ${nutritionData.dietaryPreferences.join(", ")}
-    Dietary Restrictions: ${
-      nutritionData.dietaryRestrictions.join(", ") || "None"
-    }
-    Allergies: ${nutritionData.allergies || "None"}
-    Meals per day: ${nutritionData.mealsPerDay}
-    Weekly budget: $${nutritionData.budget}
-    
-    Workout Goals: ${workoutGoals || "General fitness"}
-    
-    Include:
-    - Meal names
-    - Ingredients list
-    - Macro breakdown (protein, carbs, fats, calories)
-    - Simple recipe instructions
-    - Estimated cost per meal
-  `;
-
-  try {
-    const model = genAI.getGenerativeModel({
-      model: "gemini-2.0-flash-exp",
-      generationConfig: {
-        responseMimeType: "application/json",
-        responseSchema: nutritionPlanSchema,
-      },
-    });
-
-    const result = await model.generateContent(prompt);
-    const nutritionPlan = JSON.parse(result.response.text());
-
-    const nutritionPlanDocument = new NutritionPlan({
-      ...nutritionData,
-      ...nutritionPlan,
-    });
-
-    console.log("meal", nutritionPlanDocument);
-    await nutritionPlanDocument.save();
-    res.json(nutritionPlan);
-  } catch (error) {
-    console.error("Error generating nutrition plan:", error);
-    res.status(500).json({ error: "Failed to generate nutrition plan" });
-  }
 });
 
 router.get("/workout/:userId", async (req, res) => {

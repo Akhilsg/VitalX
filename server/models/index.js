@@ -6,8 +6,8 @@ db.mongoose = mongoose;
 
 db.user = require("./User");
 db.workout = require("./Workout");
-db.nutrition = require("./Nutrition");
 db.progress = require("./UserProgress");
 db.metrics = require("./UserMetrics");
+db.nutrition = require("./Nutrition");
 
 module.exports = db;

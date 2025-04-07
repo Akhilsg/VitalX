@@ -12,8 +12,8 @@ const LazyRegister = lazy(() => import("./pages/Register"));
 const LazyLogin = lazy(() => import("./pages/Login"));
 const LazyDashboard = lazy(() => import("./pages/Dashboard"));
 const LazyWorkoutPlan = lazy(() => import("./pages/WorkoutPlan"));
-const LazyNutritionTips = lazy(() => import("./pages/NutritionPlan"));
 const LazyAnalytics = lazy(() => import("./pages/Analytics"));
+const LazyNutrition = lazy(() => import("./pages/Nutrition"));
 
 const App = () => {
   return (
@@ -41,18 +41,18 @@ const App = () => {
               }
             />
             <Route
-              path="/nutrition"
-              element={
-                <PrivateRoute>
-                  <LazyNutritionTips />
-                </PrivateRoute>
-              }
-            />
-            <Route
               path="/analytics"
               element={
                 <PrivateRoute>
                   <LazyAnalytics />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/nutrition"
+              element={
+                <PrivateRoute>
+                  <LazyNutrition />
                 </PrivateRoute>
               }
             />

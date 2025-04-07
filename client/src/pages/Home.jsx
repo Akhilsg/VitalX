@@ -46,10 +46,9 @@ function Home() {
       bgGradient: `linear-gradient(135deg, ${theme.palette.secondary.main}15 0%, ${theme.palette.secondary.darker}50 100%)`,
     },
     {
-      icon: "mdi:account-group",
-      title: "Global Community",
-      description:
-        "Connect, compete, and grow with fitness enthusiasts worldwide",
+      icon: "mdi:food",
+      title: "AI-Powered Nutrition",
+      description: "Get tailored meal plans to complement your fitness goals",
       color: theme.palette.info.main,
       bgGradient: `linear-gradient(135deg, ${theme.palette.info.main}15 0%, ${theme.palette.info.darker}50 100%)`,
     },

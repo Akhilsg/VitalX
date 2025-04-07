@@ -1,27 +1,114 @@
 import { Icon } from "@iconify/react";
-import {
-  Avatar,
-  Box,
-  Card,
-  Grid,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Avatar, Box, Card, Grid, Stack, Typography } from "@mui/material";
 import moment from "moment";
 import React from "react";
 import Chart from "react-apexcharts";
 
-const AnalyticsOverview = ({ 
-  metrics, 
-  workoutStats, 
-  aiAnalysis, 
-  weightChartOptions, 
+const AnalyticsOverview = ({
+  metrics,
+  workoutStats,
+  aiAnalysis,
+  weightChartOptions,
   weightChartSeries,
   workoutCompletionOptions,
   workoutCompletionSeries,
   theme,
-  setActiveTab
+  setActiveTab,
 }) => {
+  metrics = [
+    { date: "2025-03-30", weight: 238 },
+    { date: "2025-03-20", weight: 241 },
+    { date: "2025-03-10", weight: 245 }, 
+    { date: "2025-03-01", weight: 249 },
+  ];
+  workoutStats = {
+    totalWorkouts: 20,
+    completedWorkouts: 17,
+    completionRate: 85,
+    lastWorkoutDate: "2025-03-30",
+  };
+  workoutCompletionSeries = [17, 3]; // 17 completed, 3 missed
+  weightChartSeries = [
+    {
+      name: "Weight",
+      data: [249, 245, 241, 238],
+    },
+  ];
+  aiAnalysis = {
+    summary:
+      "Your recent activity shows consistent effort and steady weight loss. Great job maintaining an 85% workout completion rate!",
+    recommendations: [
+      "Try increasing workout frequency to 4 days/week to accelerate results.",
+      "Include more protein-rich meals to support muscle growth.",
+      "Consider rest days with light activity like walking or stretching.",
+    ],
+  };
+
+  weightChartOptions = {
+    chart: {
+      type: "area",
+      toolbar: { show: false },
+      background: "transparent",
+    },
+    tooltip: {
+      theme: "dark",
+    },
+    stroke: {
+      curve: "smooth",
+    },
+    dataLabels: {
+      enabled: false,
+    },
+    fill: {
+      type: "gradient",
+      gradient: {
+        shade: "dark",
+        shadeIntensity: 1,
+        gradientToColors: [theme.palette.primary.light],
+        inverseColors: false,
+        opacityFrom: 0.6,
+        opacityTo: 0.1,
+        stops: [0, 90, 100],
+      },
+    },
+    colors: [theme.palette.primary.main],
+    xaxis: {
+      labels: {
+        style: {
+          colors: theme.palette.text.primary,
+        },
+      },
+    },
+    yaxis: {
+      labels: {
+        style: {
+          colors: theme.palette.text.primary,
+        },
+      },
+    },
+  };
+
+  workoutCompletionOptions = {
+    chart: {
+      type: "donut",
+      toolbar: { show: false },
+      background: "transparent",
+    },
+    tooltip: {
+      theme: "dark",
+    },
+    labels: ["Completed", "Missed"],
+    dataLabels: {
+      enabled: true,
+    },
+    colors: [theme.palette.success.main, theme.palette.error.main],
+    legend: {
+      labels: {
+        colors: theme.palette.text.primary,
+      },
+    },
+  };
+
   return (
     <Box>
       <Grid container spacing={3} mb={4}>
@@ -71,11 +158,9 @@ const AnalyticsOverview = ({
             <Box sx={{ p: 2, bgcolor: "background.paper" }}>
               <Typography variant="body2" color="text.secondary">
                 {metrics && Array.isArray(metrics) && metrics.length > 1
-                  ? `${
-                      metrics[0].weight > metrics[1].weight ? "+" : ""
-                    }${(metrics[0].weight - metrics[1].weight).toFixed(
-                      1
-                    )} lbs since last entry`
+                  ? `${metrics[0].weight > metrics[1].weight ? "+" : ""}${(
+                      metrics[0].weight - metrics[1].weight
+                    ).toFixed(1)} lbs since last entry`
                   : "No previous data"}
               </Typography>
             </Box>
@@ -219,11 +304,7 @@ const AnalyticsOverview = ({
                     height={40}
                     color={theme.palette.text.secondary}
                   />
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    mt={1}
-                  >
+                  <Typography variant="body2" color="text.secondary" mt={1}>
                     No weight data available
                   </Typography>
                 </Box>
@@ -269,11 +350,7 @@ const AnalyticsOverview = ({
                     height={40}
                     color={theme.palette.text.secondary}
                   />
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    mt={1}
-                  >
+                  <Typography variant="body2" color="text.secondary" mt={1}>
                     No workout data available
                   </Typography>
                 </Box>
@@ -295,12 +372,7 @@ const AnalyticsOverview = ({
         >
           <Stack direction="row" alignItems="center" spacing={1} mb={2}>
             <Avatar sx={{ bgcolor: theme.palette.primary.main }}>
-              <Icon
-                icon="mdi:robot"
-                width={24}
-                height={24}
-                color="white"
-              />
+              <Icon icon="mdi:robot" width={24} height={24} color="white" />
             </Avatar>
             <Typography variant="h6" fontWeight="bold">
               AI Insights

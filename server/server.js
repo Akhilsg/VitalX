@@ -26,10 +26,12 @@ const userRoutes = require("./routes/userRoutes");
 const planRoutes = require("./routes/planRoutes");
 const progressRoutes = require("./routes/progressRoutes");
 const analyticsRoutes = require("./routes/analyticsRoutes");
+const nutritionRoutes = require("./routes/nutritionRoutes");
 app.use("/api/users", userRoutes);
 app.use("/api/plans", planRoutes);
 app.use("/api/progress", progressRoutes);
 app.use("/api/analytics", analyticsRoutes);
+app.use("/api/nutrition", nutritionRoutes);
 
 const PORT = 8000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
