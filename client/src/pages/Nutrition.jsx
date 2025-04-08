@@ -18,7 +18,6 @@ import { toast } from "sonner";
 import api from "../api/axios";
 import { MealCardWrapper } from "../components/nutrition/MealPlan";
 import { PreferencesForm } from "../components/nutrition/PreferencesForm";
-const baseUrl = baseUrl;
 
 const Nutrition = () => {
   const theme = useTheme();
