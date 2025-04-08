@@ -16,9 +16,9 @@ const AnalyticsOverview = ({
   setActiveTab,
 }) => {
   metrics = [
-    { date: "2025-03-30", weight: 238 },
-    { date: "2025-03-20", weight: 241 },
-    { date: "2025-03-10", weight: 245 }, 
+    { date: "2025-03-30", weight: 241 },
+    { date: "2025-03-20", weight: 242 },
+    { date: "2025-03-10", weight: 246 },
     { date: "2025-03-01", weight: 249 },
   ];
   workoutStats = {
@@ -31,7 +31,7 @@ const AnalyticsOverview = ({
   weightChartSeries = [
     {
       name: "Weight",
-      data: [249, 245, 241, 238],
+      data: [249, 246, 242, 241],
     },
   ];
   aiAnalysis = {
@@ -49,12 +49,27 @@ const AnalyticsOverview = ({
       type: "area",
       toolbar: { show: false },
       background: "transparent",
+      foreColor: theme.palette.text.primary,
     },
     tooltip: {
       theme: "dark",
+      style: {
+        fontSize: "14px",
+      },
+      marker: {
+        show: false,
+      },
+      y: {
+        formatter: (val) => `${val} lbs`,
+      },
+    },
+    grid: {
+      borderColor: theme.palette.divider,
+      strokeDashArray: 4,
     },
     stroke: {
       curve: "smooth",
+      width: 3,
     },
     dataLabels: {
       enabled: false,
@@ -63,26 +78,32 @@ const AnalyticsOverview = ({
       type: "gradient",
       gradient: {
         shade: "dark",
-        shadeIntensity: 1,
-        gradientToColors: [theme.palette.primary.light],
-        inverseColors: false,
-        opacityFrom: 0.6,
-        opacityTo: 0.1,
+        type: "vertical",
+        shadeIntensity: 0.6,
+        gradientToColors: [theme.palette.primary.main],
+        opacityFrom: 0.4,
+        opacityTo: 0.05,
         stops: [0, 90, 100],
       },
     },
-    colors: [theme.palette.primary.main],
+    colors: [theme.palette.primary.light],
     xaxis: {
       labels: {
         style: {
-          colors: theme.palette.text.primary,
+          colors: theme.palette.text.secondary,
         },
+      },
+      axisTicks: {
+        show: false,
+      },
+      axisBorder: {
+        show: false,
       },
     },
     yaxis: {
       labels: {
         style: {
-          colors: theme.palette.text.primary,
+          colors: theme.palette.text.secondary,
         },
       },
     },
@@ -93,19 +114,43 @@ const AnalyticsOverview = ({
       type: "donut",
       toolbar: { show: false },
       background: "transparent",
+      foreColor: theme.palette.text.primary,
     },
     tooltip: {
       theme: "dark",
+      y: {
+        formatter: (val) => `${val} sessions`,
+      },
     },
     labels: ["Completed", "Missed"],
     dataLabels: {
       enabled: true,
+      dropShadow: { enabled: false },
+      style: {
+        fontSize: "15px",
+        fontWeight: "bold",
+        colors: ["#FFFFFF"],
+      },
+      formatter: (val) => `${Math.floor(val)}%`,
+    },
+    plotOptions: {
+      pie: {
+        donut: {
+          size: "50%",
+          background: "transparent",
+        },
+        expandOnClick: true,
+        offsetX: 0,
+        offsetY: 0,
+      },
     },
     colors: [theme.palette.success.main, theme.palette.error.main],
+    stroke: {
+      show: false,
+      width: 0,
+    },
     legend: {
-      labels: {
-        colors: theme.palette.text.primary,
-      },
+      show: false,
     },
   };
 
@@ -117,11 +162,9 @@ const AnalyticsOverview = ({
             sx={{
               borderRadius: 3,
               overflow: "hidden",
-              boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
               transition: "transform 0.3s",
               "&:hover": {
                 transform: "translateY(-5px)",
-                boxShadow: "rgba(0, 0, 0, 0.2) 0px 20px 30px",
               },
             }}
           >
@@ -158,9 +201,9 @@ const AnalyticsOverview = ({
             <Box sx={{ p: 2, bgcolor: "background.paper" }}>
               <Typography variant="body2" color="text.secondary">
                 {metrics && Array.isArray(metrics) && metrics.length > 1
-                  ? `${metrics[0].weight > metrics[1].weight ? "+" : ""}${(
+                  ? `${metrics[0].weight > metrics[1].weight ? "+" : ""}${
                       metrics[0].weight - metrics[1].weight
-                    ).toFixed(1)} lbs since last entry`
+                    } lbs since last entry`
                   : "No previous data"}
               </Typography>
             </Box>
@@ -171,7 +214,6 @@ const AnalyticsOverview = ({
             sx={{
               borderRadius: 3,
               overflow: "hidden",
-              boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
               transition: "transform 0.3s",
               "&:hover": {
                 transform: "translateY(-5px)",
@@ -223,7 +265,6 @@ const AnalyticsOverview = ({
             sx={{
               borderRadius: 3,
               overflow: "hidden",
-              boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
               transition: "transform 0.3s",
               "&:hover": {
                 transform: "translateY(-5px)",
@@ -272,7 +313,6 @@ const AnalyticsOverview = ({
               p: 3,
               height: "100%",
               borderRadius: 3,
-              boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
             }}
           >
             <Typography variant="h6" fontWeight="bold" mb={2}>
@@ -318,7 +358,6 @@ const AnalyticsOverview = ({
               p: 3,
               height: "100%",
               borderRadius: 3,
-              boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
             }}
           >
             <Typography variant="h6" fontWeight="bold" mb={2}>
@@ -366,7 +405,6 @@ const AnalyticsOverview = ({
             p: 3,
             mt: 3,
             borderRadius: 3,
-            boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
             background: `linear-gradient(to right, ${theme.palette.background.paper}, ${theme.palette.background.paper} 50%, rgba(25, 118, 210, 0.05))`,
           }}
         >

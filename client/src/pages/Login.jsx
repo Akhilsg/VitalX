@@ -10,19 +10,18 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import axios from "axios";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { z as zod } from "zod";
+import api from "../api/axios";
 import { Field } from "../common/form";
 import { Form } from "../common/form/form-provider";
 import { RouterLink } from "../common/router-link";
 import Section from "../components/AuthSection";
 import { useBoolean } from "../hooks/use-boolean";
-import { useRouter } from "../hooks/use-router";
 import {
   loginFailure,
   loginStart,
@@ -67,10 +66,7 @@ const Login = () => {
     dispatch(loginStart());
 
     try {
-      const response = await axios.post(
-        `https://vitalx-backend.onrender.com/api/users/login`,
-        data
-      );
+      const response = await api.post(`/users/login`, data);
 
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("user", JSON.stringify(response.data.user));

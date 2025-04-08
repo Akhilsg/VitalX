@@ -30,8 +30,9 @@ const GenerationStatus = ({ workoutId, workoutDays, onShowPlan }) => {
 
   const handleStartGeneration = () => {
     try {
+      const baseUrl = import.meta.env.VITE_API_BASE_URL;
       const eventSource = new EventSource(
-        `https://vitalx-backend.onrender.com/api/plans/generate/${workoutId}`
+        `${baseUrl}/plans/generate/${workoutId}`
       );
 
       setStatus((prev) => ({ ...prev, isGenerating: true }));

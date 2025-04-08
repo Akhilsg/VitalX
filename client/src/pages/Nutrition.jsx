@@ -1,24 +1,23 @@
 // Nutrition.jsx
-import React, { useEffect, useState } from "react";
 import {
-  Container,
-  Typography,
   Box,
-  Paper,
-  Tabs,
-  Tab,
-  Grid,
   Card,
-  CircularProgress,
+  Container,
+  Grid,
+  Paper,
+  Tab,
+  Tabs,
+  Typography,
+  useTheme,
 } from "@mui/material";
 import { AnimatePresence, m } from "framer-motion";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
-import axios from "axios";
-import { useTheme } from "@mui/material";
 
-import { PreferencesForm } from "../components/nutrition/PreferencesForm";
+import api from "../api/axios";
 import { MealCardWrapper } from "../components/nutrition/MealPlan";
+import { PreferencesForm } from "../components/nutrition/PreferencesForm";
 const baseUrl = baseUrl;
 
 const Nutrition = () => {
@@ -70,9 +69,7 @@ const Nutrition = () => {
   const fetchNutritionPlan = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        `https://vitalx-backend.onrender.com/api/nutrition/user/${user.id}`
-      );
+      const response = await api.get(`/nutrition/user/${user.id}`);
       setNutritionPlan(response.data);
       setPreferences(
         response.data.preferences || {
@@ -99,13 +96,10 @@ const Nutrition = () => {
 
   const createNewPlan = async () => {
     try {
-      const response = await axios.post(
-        `https://vitalx-backend.onrender.com/api/nutrition/create`,
-        {
-          userId: user.id,
-          preferences,
-        }
-      );
+      const response = await api.post(`/nutrition/create`, {
+        userId: user.id,
+        preferences,
+      });
       setNutritionPlan(response.data);
       setLoading(false);
     } catch (error) {
@@ -116,10 +110,7 @@ const Nutrition = () => {
 
   const savePreferences = async () => {
     try {
-      await axios.put(
-        `https://vitalx-backend.onrender.com/api/nutrition/preferences/${user.id}`,
-        preferences
-      );
+      await api.put(`/nutrition/preferences/${user.id}`, preferences);
       toast.success("Preferences saved successfully");
     } catch (error) {
       toast.error("Failed to save preferences");
@@ -131,13 +122,12 @@ const Nutrition = () => {
       setGenerating(true);
       await savePreferences();
 
-      const workoutResponse = await axios.get(`/api/plans/user/${user.id}`);
+      const workoutResponse = await api.get(`/plans/user/${user.id}`);
       const workoutPlanId = workoutResponse.data?._id;
 
-      const response = await axios.post(
-        `https://vitalx-backend.onrender.com/api/nutrition/generate/${user.id}`,
-        { workoutPlanId }
-      );
+      const response = await api.post(`/nutrition/generate/${user.id}`, {
+        workoutPlanId,
+      });
       setNutritionPlan(response.data);
       toast.success("Nutrition plan generated successfully!");
       setGenerating(false);

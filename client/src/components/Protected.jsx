@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
+import api from "../api/axios";
 
 const Protected = () => {
   const [message, setMessage] = useState("");
@@ -8,13 +8,9 @@ const Protected = () => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem("token");
-        const baseUrl = process.env.REACT_APP_API_URL;
-        const response = await axios.get(
-          `https://vitalx-backend.onrender.com/api/users/protected`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
+        const response = await api.get(`/users/protected`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         setMessage(response.data.message);
       } catch (error) {
         setMessage("Unauthorized");

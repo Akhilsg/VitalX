@@ -16,21 +16,21 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import axios from "axios";
 import { AnimatePresence, m } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { toast } from "sonner";
+import api from "../api/axios";
 import logo from "../assets/processing.png";
 import DisplayWorkoutPlan from "../components/workout/DisplayWorkoutPlan";
 import GenerationStatus from "../components/workout/GenerationStatus";
 import BasicInfo from "../components/workout/steps/BasicInfo";
 import EquipmentAccess from "../components/workout/steps/EquipmentAccess";
 import ExperienceLevel from "../components/workout/steps/ExperienceLevel";
-import GoalSelection from "../components/workout/steps/GoalSelection";
-import OptionalFields from "../components/workout/steps/OptionalFields";
-import GoalSpecificQuestions from "../components/workout/steps/GoalSpecificQuestions";
 import Finalize from "../components/workout/steps/Finalize";
+import GoalSelection from "../components/workout/steps/GoalSelection";
+import GoalSpecificQuestions from "../components/workout/steps/GoalSpecificQuestions";
+import OptionalFields from "../components/workout/steps/OptionalFields";
 
 const CustomConnector = styled(StepConnector)(({ theme }) => ({
   [`&.${stepConnectorClasses.alternativeLabel}`]: {
@@ -347,27 +347,23 @@ const WorkoutPlan = () => {
     setLoading(true);
 
     try {
-      const baseUrl = process.env.REACT_APP_API_URL;
-      const createResponse = await axios.post(
-        `https://vitalx-backend.onrender.com/api/plans/create`,
-        {
-          age: formData.age,
-          weight: formData.weight,
-          heightInInches: calculateTotalInches(
-            formData.height.ft,
-            formData.height.in
-          ),
-          goal: formData.goal,
-          gymAccess: formData.gymAccess,
-          experienceLevel: formData.experienceLevel,
-          workoutDays: formData.workoutDays,
-          motivation: formData.motivation,
-          workoutPreferences: formData.workoutPreferences,
-          currentActivityLevel: formData.currentActivityLevel,
-          userId: user.id,
-          goalSpecificData: formData.goalSpecificData || {},
-        }
-      );
+      const createResponse = await api.post(`/plans/create`, {
+        age: formData.age,
+        weight: formData.weight,
+        heightInInches: calculateTotalInches(
+          formData.height.ft,
+          formData.height.in
+        ),
+        goal: formData.goal,
+        gymAccess: formData.gymAccess,
+        experienceLevel: formData.experienceLevel,
+        workoutDays: formData.workoutDays,
+        motivation: formData.motivation,
+        workoutPreferences: formData.workoutPreferences,
+        currentActivityLevel: formData.currentActivityLevel,
+        userId: user.id,
+        goalSpecificData: formData.goalSpecificData || {},
+      });
 
       setTimeout(() => {
         setWorkoutId(createResponse.data.id);

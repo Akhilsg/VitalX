@@ -14,7 +14,6 @@ import {
   alpha,
   useTheme,
 } from "@mui/material";
-import axios from "axios";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -37,8 +36,7 @@ import {
   markWorkoutComplete,
   updateSetSuccess,
 } from "../redux/slices/progressSlice";
-
-const baseUrl = baseUrl;
+import api from "../api/axios";
 
 const Dashboard = () => {
   const theme = useTheme();
@@ -94,9 +92,7 @@ const Dashboard = () => {
       setLoading(true);
 
       try {
-        const response = await axios.get(
-          `https://vitalx-backend.onrender.com/api/plans/workout/${user.id}`
-        );
+        const response = await api.get(`/plans/workout/${user.id}`);
         setPlan(response.data);
 
         setLoading(false);
@@ -114,10 +110,8 @@ const Dashboard = () => {
   useEffect(() => {
     if (plan) {
       dispatch(initializeProgressStart());
-      axios
-        .get(
-          `https://vitalx-backend.onrender.com/api/progress/initialize/${user.id}/${plan._id}`
-        )
+      api
+        .get(`/progress/initialize/${user.id}/${plan._id}`)
         .then((res) => {
           const { userProgress } = res.data;
           const tracking = {};
@@ -228,16 +222,13 @@ const Dashboard = () => {
     setLoadingSetId(setId);
 
     try {
-      const response = await axios.patch(
-        `https://vitalx-backend.onrender.com/api/progress/update-set/${user.id}`,
-        {
-          planId: plan._id,
-          eventId,
-          exerciseIndex: exerciseIdx,
-          setIndex,
-          ...data,
-        }
-      );
+      const response = await api.patch(`/progress/update-set/${user.id}`, {
+        planId: plan._id,
+        eventId,
+        exerciseIndex: exerciseIdx,
+        setIndex,
+        ...data,
+      });
 
       dispatch(updateSetSuccess(response.data.userProgress));
 
@@ -268,13 +259,10 @@ const Dashboard = () => {
     setCompleteLoading(true);
 
     try {
-      const response = await axios.post(
-        `https://vitalx-backend.onrender.com/api/progress/mark-complete/${user.id}`,
-        {
-          planId: plan._id,
-          eventId,
-        }
-      );
+      const response = await api.post(`/progress/mark-complete/${user.id}`, {
+        planId: plan._id,
+        eventId,
+      });
       dispatch(markWorkoutComplete(response.data.userProgress));
       setDialogOpen(false);
 

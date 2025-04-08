@@ -99,7 +99,7 @@ export default function WorkoutDrawer({
         </Box>
 
         {/* Exercises */}
-        <Scrollbar sx={{ p: 3, flexGrow: 1, overflow: "auto" }}>
+        <Scrollbar sx={{ p: 3, flexGrow: 1, overflowX: "hidden" }}>
           {selectedEvent.extendedProps.description
             .split("\n")
             .map((line, exerciseIdx) => {

@@ -11,13 +11,13 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import axios from "axios";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { z as zod } from "zod";
+import api from "../api/axios";
 import { Field } from "../common/form";
 import { Form } from "../common/form/form-provider";
 import { RouterLink } from "../common/router-link";
@@ -70,11 +70,7 @@ const Register = () => {
     dispatch(registerStart());
 
     try {
-      const baseUrl = process.env.REACT_APP_API_URL;
-      await axios.post(
-        `https://vitalx-backend.onrender.com/api/users/register`,
-        data
-      );
+      await api.post(`/users/register`, data);
       dispatch(registerSuccess());
       toast.success("Registered successfully");
       navigate("/login");

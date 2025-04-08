@@ -8,14 +8,14 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import axios from "axios";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import AIAnalysis from "../components/analytics/AIAnalysis";
 import AnalyticsOverview from "../components/analytics/AnalyticsOverview";
 import BodyMetrics from "../components/analytics/BodyMetrics";
-import AIAnalysis from "../components/analytics/AIAnalysis";
 import WorkoutStats from "../components/analytics/WorkoutStats";
+import api from "../api/axios";
 
 const Analytics = () => {
   const theme = useTheme();
@@ -49,7 +49,7 @@ const Analytics = () => {
 
   const fetchMetrics = async () => {
     try {
-      const response = await axios.get("/api/metrics");
+      const response = await api.get("/metrics");
       setMetrics(response.data);
     } catch (error) {
       console.error("Error fetching metrics:", error);
@@ -58,7 +58,7 @@ const Analytics = () => {
 
   const fetchWorkoutStats = async () => {
     try {
-      const response = await axios.get("/api/workouts/stats");
+      const response = await api.get("/workouts/stats");
       setWorkoutStats(response.data);
     } catch (error) {
       console.error("Error fetching workout stats:", error);
@@ -67,7 +67,7 @@ const Analytics = () => {
 
   const fetchAiAnalysis = async () => {
     try {
-      const response = await axios.get("/api/ai/analysis");
+      const response = await api.get("/ai/analysis");
       setAiAnalysis(response.data);
     } catch (error) {
       console.error("Error fetching AI analysis:", error);
@@ -97,7 +97,7 @@ const Analytics = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post("/api/metrics", newMetric);
+      await api.post("/metrics", newMetric);
       setNewMetric({
         weight: "",
         bodyFat: "",
