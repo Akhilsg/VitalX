@@ -16,7 +16,6 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 const TOTAL_WEEKS = 4;
-const baseUrl = process.env.REACT_APP_API_URL;
 
 const GenerationStatus = ({ workoutId, workoutDays, onShowPlan }) => {
   const theme = useTheme();

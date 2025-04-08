@@ -39,8 +39,6 @@ const SignInSchema = zod.object({
     .min(6, { message: "Password must be at least 6 characters!" }),
 });
 
-const baseUrl = process.env.REACT_APP_API_URL;
-
 const Login = () => {
   const { error } = useSelector((state) => state.auth);
 

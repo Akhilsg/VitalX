@@ -42,7 +42,7 @@ const DisplayWorkoutPlan = ({ plan }) => {
   };
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: "flex", width: "100vw" }}>
       <Drawer
         variant="permanent"
         anchor="left"
@@ -68,17 +68,17 @@ const DisplayWorkoutPlan = ({ plan }) => {
           setExpandedWeek={setExpandedWeek}
         />
       </Drawer>
-      <AnimatePresence mode="wait">
-        <Box
-          component={m.div}
-          key="display"
-          initial={{ rotateX: 90 }}
-          animate={{ rotateX: 0 }}
-          transition={{ duration: 0.8, ease: "anticipate", delay: 0.3 }}
-        >
-          <Container
-            component="main"
-            sx={{ flexGrow: 1, px: 3, mb: { xs: "110px", md: 0 } }}
+      <Box
+        component="main"
+        sx={{ flexGrow: 1, width: "100%", px: 3, mb: { xs: "110px", md: 0 } }}
+      >
+        <AnimatePresence mode="wait">
+          <Box
+            component={m.div}
+            key="display"
+            initial={{ rotateX: 90 }}
+            animate={{ rotateX: 0 }}
+            transition={{ duration: 0.8, ease: "anticipate", delay: 0.3 }}
           >
             <AnimatePresence>
               {plan?.weeks.map((week) => (
@@ -97,6 +97,7 @@ const DisplayWorkoutPlan = ({ plan }) => {
                       setExpandedWeek(isExpanded ? week.weekNumber : -1)
                     }
                     sx={{
+                      width: '100%',
                       mb: 3,
                       background: "rgba(28, 37, 46, 0.85)",
                       "&:before": { display: "none" },
@@ -317,9 +318,9 @@ const DisplayWorkoutPlan = ({ plan }) => {
                 </MotionBox>
               ))}
             </AnimatePresence>
-          </Container>
-        </Box>
-      </AnimatePresence>
+          </Box>
+        </AnimatePresence>
+      </Box>
     </Box>
   );
 };

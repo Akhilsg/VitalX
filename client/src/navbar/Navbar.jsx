@@ -99,9 +99,10 @@ const Navbar = () => {
           ...(!isBaseLink && toolbarStyles.offset),
         }}
       >
-        <Container
-          maxWidth="xl"
+        <Box
           sx={{
+            px: 3,
+            width: "100%",
             height: 1,
             display: "flex",
             alignItems: "center",
@@ -138,7 +139,7 @@ const Navbar = () => {
               Join Us
             </Button>
           )}
-        </Container>
+        </Box>
       </Toolbar>
       {offsetTop && location !== "/" && <StyledElevation />}
     </AppBar>
