@@ -18,6 +18,7 @@ import { toast } from "sonner";
 import api from "../api/axios";
 import { MealCardWrapper } from "../components/nutrition/MealPlan";
 import { PreferencesForm } from "../components/nutrition/PreferencesForm";
+import { CustomTabs } from "../common/tabs";
 
 const Nutrition = () => {
   const theme = useTheme();
@@ -121,7 +122,7 @@ const Nutrition = () => {
       setGenerating(true);
       await savePreferences();
 
-      const workoutResponse = await api.get(`/plans/user/${user.id}`);
+      const workoutResponse = await api.get(`/nutrition/user/${user.id}`);
       const workoutPlanId = workoutResponse.data?._id;
 
       const response = await api.post(`/nutrition/generate/${user.id}`, {
@@ -247,26 +248,19 @@ const Nutrition = () => {
 
     return (
       <Box>
-        <Paper sx={{ mb: 3 }}>
-          <Tabs
+        <Paper sx={{ mb: 3, borderRadius: 2 }}>
+          <CustomTabs
             value={activeDay}
             onChange={handleDayChange}
-            variant="scrollable"
-            scrollButtons="auto"
-            allowScrollButtonsMobile
-            sx={{
-              px: 2,
-              "& .MuiTabs-indicator": {
-                backgroundColor: theme.palette.primary.main,
-              },
-            }}
+            variant="fullWidth"
+            scrollButtons="false"
           >
             {daysOfWeek.map((day, index) => (
               <Tab
                 key={day}
                 label={day}
                 sx={{
-                  minWidth: 100,
+                  minWidth: "auto", // Allow tabs to shrink if needed
                   fontWeight: activeDay === index ? 700 : 500,
                   color:
                     activeDay === index
@@ -275,7 +269,7 @@ const Nutrition = () => {
                 }}
               />
             ))}
-          </Tabs>
+          </CustomTabs>
         </Paper>
 
         <Box sx={{ mb: 4 }}>
@@ -337,9 +331,6 @@ const Nutrition = () => {
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" component="h1" sx={{ mb: 4, fontWeight: 700 }}>
-        Nutrition Plan
-      </Typography>
       {loading ? (
         <Box
           sx={{

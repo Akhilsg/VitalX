@@ -21,11 +21,9 @@ import { Icon } from "@iconify/react";
 const EquipmentAccess = ({ formData, handleInputChange, errors }) => {
   const theme = useTheme();
   const [showHomeEquipment, setShowHomeEquipment] = useState(false);
-  const [showGymEquipment, setShowGymEquipment] = useState(false);
 
   useEffect(() => {
     setShowHomeEquipment(formData.gymAccess === "home-gym");
-    setShowGymEquipment(formData.gymAccess === "full-gym");
   }, [formData.gymAccess]);
 
   const equipmentOptions = {
@@ -41,7 +39,7 @@ const EquipmentAccess = ({ formData, handleInputChange, errors }) => {
       { value: "kettlebells", label: "Kettlebells", icon: "mdi:weight-lifter" },
       { value: "treadmill", label: "Treadmill", icon: "mdi:run" },
     ],
-    "full-gym": [
+    "commercial-gym": [
       {
         value: "machines",
         label: "Weight Machines",
@@ -143,7 +141,7 @@ const EquipmentAccess = ({ formData, handleInputChange, errors }) => {
                 <Grid container spacing={2}>
                   {[
                     {
-                      value: "full-gym",
+                      value: "commercial-gym",
                       label: "Commercial Gym",
                       icon: "mdi:office-building",
                       description:
@@ -269,7 +267,7 @@ const EquipmentAccess = ({ formData, handleInputChange, errors }) => {
         </Grid>
 
         <Grid item xs={12}>
-          <Collapse in={showHomeEquipment || showGymEquipment}>
+          <Collapse in={showHomeEquipment}>
             <Box
               sx={{
                 p: 2,
@@ -296,10 +294,7 @@ const EquipmentAccess = ({ formData, handleInputChange, errors }) => {
               </Typography>
 
               <Grid container spacing={2}>
-                {(showHomeEquipment
-                  ? equipmentOptions["home-gym"]
-                  : equipmentOptions["full-gym"]
-                ).map((item) => {
+                {equipmentOptions["home-gym"].map((item) => {
                   const isSelected = getSelectedEquipment().includes(
                     item.value
                   );
@@ -334,7 +329,10 @@ const EquipmentAccess = ({ formData, handleInputChange, errors }) => {
                         }}
                         onClick={() =>
                           handleEquipmentChange({
-                            target: { name: item.value, checked: !isSelected },
+                            target: {
+                              name: item.value,
+                              checked: !isSelected,
+                            },
                           })
                         }
                       >

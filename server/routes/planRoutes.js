@@ -31,7 +31,7 @@ const workoutPlanSchema = {
           },
           reps: {
             type: SchemaType.STRING,
-            description: "Number of repetitions",
+            description: "Number of repetitions as a string, with bounds. e.g. 8-12",
           },
           rest: {
             type: SchemaType.STRING,
@@ -54,31 +54,32 @@ const workoutPlanSchema = {
   required: ["exercises"],
 };
 
-// async function getVideo(exerciseName) {
-//   const options = {
-//     method: "GET",
-//     url: "https://yt-api.p.rapidapi.com/search",
-//     params: {
-//       query: `${exerciseName} exercise tutorial proper form`,
-//       limit: "1",
-//     },
-//     headers: {
-//       "X-RapidAPI-Key": process.env.X_RAPID_API_KEY,
-//       "X-RapidAPI-Host": "yt-api.p.rapidapi.com",
-//     },
-//   };
+async function getVideo(exerciseName) {
+  const options = {
+    method: "GET",
+    url: "https://yt-api.p.rapidapi.com/search",
+    params: {
+      query: `${exerciseName} exercise tutorial proper form`,
+      limit: "1",
+    },
+    headers: {
+      "X-RapidAPI-Key": process.env.X_RAPID_API_KEY,
+      "X-RapidAPI-Host": "yt-api.p.rapidapi.com",
+    },
+  };
 
-//   try {
-//     const response = await axios.request(options);
-//     return {
-//       videoId: response.data.data[0].videoId,
-//       thumbnail: response.data.data[0].thumbnail[0].url,
-//     };
-//   } catch (error) {
-//     console.error("Error fetching video:", error);
-//     return null;
-//   }
-// }
+  try {
+    const response = await axios.request(options);
+    return {
+      videoId: response.data.data[0].videoId,
+      thumbnail: response.data.data[0].thumbnail[0].url,
+    };
+  } catch (error) {
+    console.error("Error fetching video:", error);
+    return null;
+  }
+}
+
 router.use(function (req, res, next) {
   res.header(
     "Access-Control-Allow-Headers",

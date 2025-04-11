@@ -31,7 +31,6 @@ const BodyMetrics = ({
           sx={{
             p: 3,
             borderRadius: 3,
-            boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
           }}
         >
           <Stack direction="row" alignItems="center" spacing={1} mb={3}>
@@ -191,7 +190,6 @@ const BodyMetrics = ({
           sx={{
             p: 3,
             borderRadius: 3,
-            boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
             height: "100%",
           }}
         >
@@ -239,7 +237,6 @@ const BodyMetrics = ({
             sx={{
               p: 3,
               borderRadius: 3,
-              boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
               mt: 2,
             }}
           >

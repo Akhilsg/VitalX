@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 
 const ExerciseSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  sets: { type: Number, required: true },
-  reps: { type: String, required: true },
-  rest: { type: String, required: true },
+  sets: { type: Number },
+  reps: { type: String },
+  rest: { type: String },
   duration: { type: String },
   needsVideo: { type: Boolean, required: true },
   videoId: { type: String },

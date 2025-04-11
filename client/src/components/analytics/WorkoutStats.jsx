@@ -1,7 +1,8 @@
 import { Icon } from "@iconify/react";
-import { Box, Card, Grid, Stack, Typography } from "@mui/material";
-import React from "react";
+import { Box, Card, Grid, Stack, Typography, Fade, Grow } from "@mui/material";
+import React, { useState, useEffect } from "react";
 import Chart from "react-apexcharts";
+import { m } from "framer-motion";
 
 const WorkoutStats = ({
   workoutStats,
@@ -9,245 +10,250 @@ const WorkoutStats = ({
   workoutChartSeries,
   theme,
 }) => {
-  // Mock workoutStats for before and after transformation
-  workoutStats = {
-    totalWorkouts: 20,
-    completionRate: 87,
-    avgDuration: 45,
-    mostCommonType: "HIIT",
-    recentWorkouts: [
-      {
-        date: "2025-03-01",
-        name: "Full Body Burn",
-        type: "HIIT",
-        duration: 45,
-        completed: true,
-      },
-      {
-        date: "2025-03-03",
-        name: "Cardio Blast",
-        type: "Cardio",
-        duration: 40,
-        completed: true,
-      },
-      {
-        date: "2025-03-06",
-        name: "Upper Body Power",
-        type: "Strength",
-        duration: 50,
-        completed: true,
-      },
-      {
-        date: "2025-03-10",
-        name: "Core Crusher",
-        type: "HIIT",
-        duration: 45,
-        completed: false,
-      },
-      {
-        date: "2025-03-15",
-        name: "Leg Day",
-        type: "Strength",
-        duration: 60,
-        completed: true,
-      },
-      {
-        date: "2025-03-20",
-        name: "HIIT Madness",
-        type: "HIIT",
-        duration: 45,
-        completed: true,
-      },
-      {
-        date: "2025-03-25",
-        name: "Cardio & Core",
-        type: "Cardio",
-        duration: 35,
-        completed: true,
-      },
-      {
-        date: "2025-03-30",
-        name: "Final Burn",
-        type: "HIIT",
-        duration: 50,
-        completed: true,
-      },
-    ],
-    weightProgress: [
-      { date: "2025-03-01", weight: 249 },
-      { date: "2025-03-10", weight: 245 },
-      { date: "2025-03-20", weight: 241 },
-      { date: "2025-03-30", weight: 238 },
-    ],
+  const [animate, setAnimate] = useState(false);
+  
+  useEffect(() => {
+    setAnimate(true);
+  }, []);
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        delay: i * 0.1,
+        duration: 0.5,
+        ease: "easeOut"
+      }
+    })
   };
+
+  const EmptyStateIcon = ({ icon, text }) => (
+    <m.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5, delay: 0.2 }}
+      style={{ width: '100%', height: '100%' }}
+    >
+      <Box
+        sx={{
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "column",
+          bgcolor: "rgba(0,0,0,0.02)",
+          borderRadius: 2,
+          p: 3,
+        }}
+      >
+        <m.div
+          initial={{ scale: 0.5 }}
+          animate={{ scale: 1 }}
+          transition={{ 
+            duration: 0.5,
+            delay: 0.3,
+            type: "spring",
+            stiffness: 200
+          }}
+        >
+          <Box
+            sx={{
+              p: 2,
+              borderRadius: '50%',
+              bgcolor: `${theme.palette.primary.main}15`,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              mb: 2
+            }}
+          >
+            <Icon
+              icon={icon}
+              width={60}
+              height={60}
+              color={theme.palette.primary.main}
+            />
+          </Box>
+        </m.div>
+        <Typography
+          variant="body1"
+          color="text.secondary"
+          mt={1}
+          sx={{ textAlign: 'center' }}
+        >
+          {text}
+        </Typography>
+      </Box>
+    </m.div>
+  );
 
   return (
     <Grid container spacing={3}>
       <Grid item xs={12} md={6}>
-        <Card
-          sx={{
-            p: 3,
-            borderRadius: 3,
-            boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
-            height: "100%",
-          }}
+        <m.div
+          initial="hidden"
+          animate={animate ? "visible" : "hidden"}
+          variants={cardVariants}
+          custom={0}
         >
-          <Typography variant="h6" fontWeight="bold" mb={3}>
-            Workout Distribution
-          </Typography>
-          <Box sx={{ height: 300 }}>
-            {workoutStats ? (
-              <Chart
-                options={workoutChartOptions}
-                series={workoutChartSeries}
-                type="pie"
-                height="100%"
-              />
-            ) : (
-              <Box
-                sx={{
-                  height: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexDirection: "column",
-                  bgcolor: "rgba(0,0,0,0.02)",
-                  borderRadius: 2,
-                }}
-              >
-                <Icon
-                  icon="mdi:chart-pie"
-                  width={40}
-                  height={40}
-                  color={theme.palette.text.secondary}
+          <Card
+            sx={{
+              p: 3,
+              borderRadius: 3,
+              boxShadow: "0 6px 15px rgba(0,0,0,0.05)",
+              height: "100%",
+              transition: "transform 0.3s, box-shadow 0.3s",
+              "&:hover": {
+                transform: "translateY(-5px)",
+                boxShadow: "0 12px 20px rgba(0,0,0,0.1)"
+              }
+            }}
+          >
+            <Typography variant="h6" fontWeight="bold" mb={3}>
+              Workout Distribution
+            </Typography>
+            <Box sx={{ height: 300 }}>
+              {workoutStats ? (
+                <Fade in={animate} timeout={800}>
+                  <Box>
+                    <Chart
+                      options={workoutChartOptions}
+                      series={workoutChartSeries}
+                      type="pie"
+                      height="100%"
+                    />
+                  </Box>
+                </Fade>
+              ) : (
+                <EmptyStateIcon 
+                  icon="mdi:chart-pie" 
+                  text="No workout data available yet. Complete different types of workouts to see your distribution."
                 />
-                <Typography variant="body2" color="text.secondary" mt={1}>
-                  No workout data available
-                </Typography>
-              </Box>
-            )}
-          </Box>
-        </Card>
+              )}
+            </Box>
+          </Card>
+        </m.div>
       </Grid>
       <Grid item xs={12} md={6}>
-        <Card
-          sx={{
-            p: 3,
-            borderRadius: 3,
-            boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
-            height: "100%",
-          }}
+        <m.div
+          initial="hidden"
+          animate={animate ? "visible" : "hidden"}
+          variants={cardVariants}
+          custom={1}
         >
-          <Typography variant="h6" fontWeight="bold" mb={3}>
-            Workout Statistics
-          </Typography>
-          {workoutStats ? (
-            <Grid container spacing={2}>
-              <Grid item xs={6}>
-                <Card
-                  sx={{
-                    p: 2,
-                    borderRadius: 2,
-                    boxShadow: "none",
-                    bgcolor: "rgba(0,0,0,0.02)",
-                  }}
-                >
-                  <Typography variant="caption" color="text.secondary">
-                    TOTAL WORKOUTS
-                  </Typography>
-                  <Typography variant="h5" fontWeight="bold" mt={1}>
-                    {workoutStats.totalWorkouts}
-                  </Typography>
-                </Card>
+          <Card
+            sx={{
+              p: 3,
+              borderRadius: 3,
+              boxShadow: "0 6px 15px rgba(0,0,0,0.05)",
+              height: "100%",
+              transition: "transform 0.3s, box-shadow 0.3s",
+              "&:hover": {
+                transform: "translateY(-5px)",
+                boxShadow: "0 12px 20px rgba(0,0,0,0.1)"
+              }
+            }}
+          >
+            <Typography variant="h6" fontWeight="bold" mb={3}>
+              Workout Statistics
+            </Typography>
+            {workoutStats ? (
+              <Grid container spacing={2}>
+                {[
+                  {
+                    title: "TOTAL WORKOUTS",
+                    value: workoutStats.totalWorkouts,
+                    icon: "mdi:calendar-check",
+                    color: theme.palette.primary.main
+                  },
+                  {
+                    title: "COMPLETION RATE",
+                    value: `${Math.round(workoutStats.completionRate)}%`,
+                    icon: "mdi:percent",
+                    color: theme.palette.success.main
+                  },
+                  {
+                    title: "AVG. DURATION",
+                    value: `${workoutStats.avgDuration} min`,
+                    icon: "mdi:clock-outline",
+                    color: theme.palette.warning.main
+                  },
+                  {
+                    title: "MOST COMMON",
+                    value: workoutStats.mostCommonType,
+                    icon: "mdi:star",
+                    color: theme.palette.info.main
+                  }
+                ].map((stat, index) => (
+                  <Grid item xs={6} key={index}>
+                    <m.div
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.3 + (index * 0.1) }}
+                    >
+                      <Card
+                        sx={{
+                          p: 2,
+                          borderRadius: 2,
+                          boxShadow: "none",
+                          bgcolor: "rgba(0,0,0,0.02)",
+                          transition: "transform 0.2s, box-shadow 0.2s",
+                          "&:hover": {
+                            transform: "translateY(-3px)",
+                            boxShadow: "0 4px 8px rgba(0,0,0,0.05)",
+                            bgcolor: `${stat.color}08`
+                          }
+                        }}
+                      >
+                        <Stack direction="row" alignItems="center" spacing={1}>
+                          <Box
+                            sx={{
+                              p: 1,
+                              borderRadius: '50%',
+                              bgcolor: `${stat.color}15`,
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center'
+                            }}
+                          >
+                            <Icon icon={stat.icon} width={18} height={18} color={stat.color} />
+                          </Box>
+                          <Typography variant="caption" color="text.secondary">
+                            {stat.title}
+                          </Typography>
+                        </Stack>
+                        <Typography variant="h5" fontWeight="bold" mt={1}>
+                          {stat.value}
+                        </Typography>
+                      </Card>
+                    </m.div>
+                  </Grid>
+                ))}
               </Grid>
-              <Grid item xs={6}>
-                <Card
-                  sx={{
-                    p: 2,
-                    borderRadius: 2,
-                    boxShadow: "none",
-                    bgcolor: "rgba(0,0,0,0.02)",
-                  }}
-                >
-                  <Typography variant="caption" color="text.secondary">
-                    COMPLETION RATE
-                  </Typography>
-                  <Typography variant="h5" fontWeight="bold" mt={1}>
-                    {Math.round(workoutStats.completionRate)}%
-                  </Typography>
-                </Card>
-              </Grid>
-              <Grid item xs={6}>
-                <Card
-                  sx={{
-                    p: 2,
-                    borderRadius: 2,
-                    boxShadow: "none",
-                    bgcolor: "rgba(0,0,0,0.02)",
-                  }}
-                >
-                  <Typography variant="caption" color="text.secondary">
-                    AVG. DURATION
-                  </Typography>
-                  <Typography variant="h5" fontWeight="bold" mt={1}>
-                    {workoutStats.avgDuration} min
-                  </Typography>
-                </Card>
-              </Grid>
-              <Grid item xs={6}>
-                <Card
-                  sx={{
-                    p: 2,
-                    borderRadius: 2,
-                    boxShadow: "none",
-                    bgcolor: "rgba(0,0,0,0.02)",
-                  }}
-                >
-                  <Typography variant="caption" color="text.secondary">
-                    MOST COMMON
-                  </Typography>
-                  <Typography variant="h5" fontWeight="bold" mt={1}>
-                    {workoutStats.mostCommonType}
-                  </Typography>
-                </Card>
-              </Grid>
-            </Grid>
-          ) : (
-            <Box
-              sx={{
-                height: "100%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexDirection: "column",
-                bgcolor: "rgba(0,0,0,0.02)",
-                borderRadius: 2,
-                py: 4,
-              }}
-            >
-              <Icon
-                icon="mdi:dumbbell"
-                width={40}
-                height={40}
-                color={theme.palette.text.secondary}
+            ) : (
+              <EmptyStateIcon 
+                icon="mdi:dumbbell" 
+                text="No workout statistics available yet. Complete workouts to see your stats."
               />
-              <Typography variant="body2" color="text.secondary" mt={1}>
-                No workout statistics available
-              </Typography>
-            </Box>
-          )}
-        </Card>
+            )}
+          </Card>
+        </m.div>
       </Grid>
 
-      {workoutStats &&
-        workoutStats.recentWorkouts &&
-        Array.isArray(workoutStats.recentWorkouts) && (
-          <Grid item xs={12}>
+      {workoutStats && workoutStats.recentWorkouts && Array.isArray(workoutStats.recentWorkouts) && (
+        <Grid item xs={12}>
+          <Grow in={animate} timeout={800} style={{ transformOrigin: '0 0 0' }}>
             <Card
               sx={{
                 p: 3,
                 borderRadius: 3,
-                boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
+                boxShadow: "0 6px 15px rgba(0,0,0,0.05)",
+                transition: "box-shadow 0.3s",
+                "&:hover": {
+                  boxShadow: "0 12px 20px rgba(0,0,0,0.1)"
+                }
               }}
             >
               <Typography variant="h6" fontWeight="bold" mb={3}>
@@ -287,10 +293,14 @@ const WorkoutStats = ({
                   </thead>
                   <tbody>
                     {workoutStats.recentWorkouts.map((workout, index) => (
-                      <tr
+                      <m.tr
                         key={index}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5 + (index * 0.05) }}
                         style={{
                           borderBottom: `1px solid ${theme.palette.divider}`,
+                          backgroundColor: index % 2 === 0 ? 'transparent' : 'rgba(0,0,0,0.01)'
                         }}
                       >
                         <td style={{ padding: "12px 16px", fontWeight: 500 }}>
@@ -312,14 +322,10 @@ const WorkoutStats = ({
                             {workout.type}
                           </Box>
                         </td>
-                        <td
-                          style={{ padding: "12px 16px", textAlign: "right" }}
-                        >
+                        <td style={{ padding: "12px 16px", textAlign: "right" }}>
                           {workout.duration} min
                         </td>
-                        <td
-                          style={{ padding: "12px 16px", textAlign: "center" }}
-                        >
+                        <td style={{ padding: "12px 16px", textAlign: "center" }}>
                           {workout.completed ? (
                             <Box
                               sx={{
@@ -362,14 +368,15 @@ const WorkoutStats = ({
                             </Box>
                           )}
                         </td>
-                      </tr>
+                      </m.tr>
                     ))}
                   </tbody>
                 </table>
               </Box>
             </Card>
-          </Grid>
-        )}
+          </Grow>
+        </Grid>
+      )}
     </Grid>
   );
 };

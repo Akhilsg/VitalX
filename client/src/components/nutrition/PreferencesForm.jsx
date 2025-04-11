@@ -1,5 +1,4 @@
-// PreferencesForm.jsx
-import React from "react";
+import { Icon } from "@iconify/react/dist/iconify.js";
 import {
   Box,
   Button,
@@ -15,7 +14,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { Icon } from "@iconify/react/dist/iconify.js";
+import React from "react";
 
 export const PreferencesForm = ({
   preferences,
@@ -57,6 +56,7 @@ export const PreferencesForm = ({
                 "Gluten-Free",
                 "Dairy-Free",
                 "Low-Carb",
+                "Low-Calorie",
                 "Mediterranean",
                 "Pescatarian",
                 "Whole30",

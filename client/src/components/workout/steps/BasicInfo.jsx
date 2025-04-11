@@ -58,6 +58,7 @@ const BasicInfo = ({ formData, setFormData, calculateTotalInches, errors }) => {
             label="Age"
             type="number"
             helperText={errors.age}
+            error={!!errors.age}
           />
 
           <Field.Text
@@ -65,6 +66,7 @@ const BasicInfo = ({ formData, setFormData, calculateTotalInches, errors }) => {
             label="Weight (lbs)"
             type="number"
             helperText={errors.weight}
+            error={!!errors.weight}
           />
 
           <Box sx={{ display: "flex", gap: 3 }}>
@@ -73,6 +75,7 @@ const BasicInfo = ({ formData, setFormData, calculateTotalInches, errors }) => {
               label="Height (ft)"
               type="number"
               helperText={errors.height}
+              error={!!errors.height}
               InputProps={{ inputProps: { min: 3, max: 8 } }}
             />
 

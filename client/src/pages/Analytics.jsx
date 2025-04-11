@@ -2,20 +2,23 @@ import { Icon } from "@iconify/react";
 import {
   Box,
   Container,
+  Fade,
   Paper,
   Tab,
   Tabs,
   Typography,
   useTheme,
 } from "@mui/material";
+import { m } from "framer-motion";
 import moment from "moment";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import api from "../api/axios";
 import AIAnalysis from "../components/analytics/AIAnalysis";
 import AnalyticsOverview from "../components/analytics/AnalyticsOverview";
 import BodyMetrics from "../components/analytics/BodyMetrics";
 import WorkoutStats from "../components/analytics/WorkoutStats";
-import api from "../api/axios";
+import { CustomTabs } from "../common/tabs";
 
 const Analytics = () => {
   const theme = useTheme();
@@ -25,6 +28,7 @@ const Analytics = () => {
   const [workoutStats, setWorkoutStats] = useState(null);
   const [aiAnalysis, setAiAnalysis] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [pageLoaded, setPageLoaded] = useState(false);
 
   const [newMetric, setNewMetric] = useState({
     weight: "",
@@ -45,11 +49,18 @@ const Analytics = () => {
       fetchWorkoutStats();
       fetchAiAnalysis();
     }
+
+    // Set page loaded after a small delay to trigger animations
+    setTimeout(() => {
+      setPageLoaded(true);
+    }, 100);
   }, [user]);
 
   const fetchMetrics = async () => {
     try {
-      const response = await api.get("/metrics");
+      setLoading(true);
+      // Updated endpoint to match server routes
+      const response = await api.get(`/analytics/metrics/${user.id}`);
       setMetrics(response.data);
     } catch (error) {
       console.error("Error fetching metrics:", error);
@@ -58,7 +69,8 @@ const Analytics = () => {
 
   const fetchWorkoutStats = async () => {
     try {
-      const response = await api.get("/workouts/stats");
+      // Updated endpoint to match server routes
+      const response = await api.get("/progress/stats");
       setWorkoutStats(response.data);
     } catch (error) {
       console.error("Error fetching workout stats:", error);
@@ -67,7 +79,8 @@ const Analytics = () => {
 
   const fetchAiAnalysis = async () => {
     try {
-      const response = await api.get("/ai/analysis");
+      // Updated endpoint to match server routes
+      const response = await api.get(`/analytics/ai-analysis/${user.id}`);
       setAiAnalysis(response.data);
     } catch (error) {
       console.error("Error fetching AI analysis:", error);
@@ -97,7 +110,8 @@ const Analytics = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await api.post("/metrics", newMetric);
+      // Updated endpoint to match server routes
+      await api.post(`/analytics/metrics/${user.id}`, newMetric);
       setNewMetric({
         weight: "",
         bodyFat: "",
@@ -131,63 +145,31 @@ const Analytics = () => {
       zoom: {
         enabled: false,
       },
-    },
-    dataLabels: {
-      enabled: false,
-    },
-    stroke: {
-      curve: "smooth",
-      width: 3,
-    },
-    grid: {
-      borderColor: theme.palette.divider,
-      row: {
-        colors: ["transparent"],
-        opacity: 0.5,
-      },
-    },
-    xaxis: {
-      categories:
-        metrics && Array.isArray(metrics) && metrics.length > 0
-          ? metrics
-              .slice(0, 10)
-              .reverse()
-              .map((metric) => moment(metric.date).format("MMM DD"))
-          : [],
-      labels: {
+      height: "100%",
+      parentHeightOffset: 0,
+      tooltip: {
+        theme: "dark",
         style: {
-          colors: theme.palette.text.secondary,
+          fontSize: "14px",
         },
-      },
-      axisBorder: {
-        show: false,
-      },
-      axisTicks: {
-        show: false,
-      },
-    },
-    yaxis: {
-      labels: {
-        style: {
-          colors: theme.palette.text.secondary,
+        marker: {
+          show: false,
+        },
+        y: {
+          formatter: (val) => `${val} lbs`,
+        },
+        custom: ({ series, seriesIndex, dataPointIndex, w }) => {
+          return `<div style="padding: 12px; background: ${theme.palette.background.paper}; border: 1px solid ${theme.palette.divider}; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+            <div style="color: ${theme.palette.text.primary}; font-weight: 600; margin-bottom: 8px;">
+              ${w.globals.labels[dataPointIndex]}
+            </div>
+            <div style="color: ${theme.palette.primary.main}; font-size: 16px; font-weight: 700;">
+              ${series[seriesIndex][dataPointIndex]} lbs
+            </div>
+          </div>`;
         },
       },
     },
-    tooltip: {
-      x: {
-        format: "dd MMM yyyy",
-      },
-    },
-    fill: {
-      type: "gradient",
-      gradient: {
-        shadeIntensity: 1,
-        opacityFrom: 0.7,
-        opacityTo: 0.2,
-        stops: [0, 100],
-      },
-    },
-    colors: [theme.palette.primary.main],
   };
 
   const weightChartSeries = [
@@ -208,6 +190,19 @@ const Analytics = () => {
     chart: {
       toolbar: {
         show: false,
+      },
+      animations: {
+        enabled: true,
+        easing: "easeinout",
+        speed: 800,
+        animateGradually: {
+          enabled: true,
+          delay: 150,
+        },
+        dynamicAnimation: {
+          enabled: true,
+          speed: 350,
+        },
       },
     },
     labels: ["Completed", "Missed"],
@@ -234,6 +229,31 @@ const Analytics = () => {
       pie: {
         donut: {
           size: "60%",
+          labels: {
+            show: true,
+            name: {
+              show: true,
+              fontSize: "16px",
+              fontFamily: theme.typography.fontFamily,
+              fontWeight: 600,
+              color: theme.palette.text.primary,
+            },
+            value: {
+              show: true,
+              fontSize: "20px",
+              fontFamily: theme.typography.fontFamily,
+              fontWeight: 700,
+              color: theme.palette.text.primary,
+            },
+            total: {
+              show: true,
+              label: "Total",
+              fontSize: "14px",
+              fontFamily: theme.typography.fontFamily,
+              fontWeight: 600,
+              color: theme.palette.text.secondary,
+            },
+          },
         },
       },
     },
@@ -252,6 +272,19 @@ const Analytics = () => {
       toolbar: {
         show: false,
       },
+      animations: {
+        enabled: true,
+        easing: "easeinout",
+        speed: 800,
+        animateGradually: {
+          enabled: true,
+          delay: 150,
+        },
+        dynamicAnimation: {
+          enabled: true,
+          speed: 350,
+        },
+      },
     },
     labels: workoutStats ? workoutStats.workoutTypes : [],
     colors: [
@@ -268,6 +301,18 @@ const Analytics = () => {
       labels: {
         colors: theme.palette.text.secondary,
       },
+      markers: {
+        width: 12,
+        height: 12,
+        strokeWidth: 0,
+        radius: 12,
+        offsetX: 0,
+        offsetY: 0,
+      },
+      itemMargin: {
+        horizontal: 10,
+        vertical: 5,
+      },
     },
     dataLabels: {
       enabled: true,
@@ -278,11 +323,49 @@ const Analytics = () => {
         fontSize: "12px",
         fontFamily: theme.typography.fontFamily,
         fontWeight: "bold",
+        colors: ["#fff"],
+      },
+      background: {
+        enabled: true,
+        foreColor: "#000",
+        padding: 4,
+        borderRadius: 4,
+        borderWidth: 0,
+        opacity: 0.7,
+      },
+      dropShadow: {
+        enabled: true,
+        top: 1,
+        left: 1,
+        blur: 2,
+        color: "rgba(0,0,0,0.3)",
+        opacity: 0.5,
       },
     },
     plotOptions: {
       pie: {
         expandOnClick: false,
+        donut: {
+          size: "60%",
+        },
+      },
+    },
+    states: {
+      hover: {
+        filter: {
+          type: "darken",
+          value: 0.9,
+        },
+      },
+    },
+    stroke: {
+      width: 2,
+      colors: ["#fff"],
+    },
+    tooltip: {
+      style: {
+        fontSize: "14px",
+        fontFamily: theme.typography.fontFamily,
       },
     },
   };
@@ -298,6 +381,19 @@ const Analytics = () => {
       zoom: {
         enabled: false,
       },
+      animations: {
+        enabled: true,
+        easing: "easeinout",
+        speed: 800,
+        animateGradually: {
+          enabled: true,
+          delay: 150,
+        },
+        dynamicAnimation: {
+          enabled: true,
+          speed: 350,
+        },
+      },
     },
     dataLabels: {
       enabled: false,
@@ -305,12 +401,19 @@ const Analytics = () => {
     stroke: {
       width: 2,
       curve: "smooth",
+      dashArray: [0, 0, 0, 0, 0],
     },
     grid: {
       borderColor: theme.palette.divider,
       row: {
         colors: ["transparent"],
         opacity: 0.5,
+      },
+      padding: {
+        top: 0,
+        right: 10,
+        bottom: 0,
+        left: 10,
       },
     },
     xaxis: {
@@ -324,7 +427,10 @@ const Analytics = () => {
       labels: {
         style: {
           colors: theme.palette.text.secondary,
+          fontSize: "12px",
+          fontFamily: theme.typography.fontFamily,
         },
+        offsetY: 2,
       },
       axisBorder: {
         show: false,
@@ -337,6 +443,11 @@ const Analytics = () => {
       labels: {
         style: {
           colors: theme.palette.text.secondary,
+          fontSize: "12px",
+          fontFamily: theme.typography.fontFamily,
+        },
+        formatter: function (val) {
+          return val.toFixed(1) + '"';
         },
       },
     },
@@ -346,6 +457,20 @@ const Analytics = () => {
           return val + '"';
         },
       },
+      style: {
+        fontSize: "12px",
+        fontFamily: theme.typography.fontFamily,
+      },
+      marker: {
+        show: true,
+        fillColors: [
+          theme.palette.primary.main,
+          theme.palette.secondary.main,
+          theme.palette.success.main,
+          theme.palette.warning.main,
+          theme.palette.error.main,
+        ],
+      },
     },
     legend: {
       position: "top",
@@ -353,6 +478,18 @@ const Analytics = () => {
       fontFamily: theme.typography.fontFamily,
       labels: {
         colors: theme.palette.text.secondary,
+      },
+      markers: {
+        width: 12,
+        height: 12,
+        strokeWidth: 0,
+        radius: 12,
+        offsetX: 0,
+        offsetY: 0,
+      },
+      itemMargin: {
+        horizontal: 10,
+        vertical: 5,
       },
     },
     colors: [
@@ -362,6 +499,13 @@ const Analytics = () => {
       theme.palette.warning.main,
       theme.palette.error.main,
     ],
+    markers: {
+      size: 5,
+      hover: {
+        size: 7,
+        sizeOffset: 3,
+      },
+    },
   };
 
   const measurementsChartSeries =
@@ -405,104 +549,153 @@ const Analytics = () => {
         ]
       : [];
 
+  // Animation variants for page elements
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 0.5,
+        when: "beforeChildren",
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { duration: 0.5 },
+    },
+  };
+
+  const tabVariants = {
+    hidden: { opacity: 0, y: -10 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.3, ease: "easeOut" },
+    },
+  };
+
   return (
-    <Container maxWidth="xl" sx={{ py: 4 }}>
-      <Typography variant="h4" fontWeight="bold" mb={1}>
-        Analytics Dashboard
-      </Typography>
-      <Typography variant="body1" color="text.secondary" mb={4}>
-        Track your fitness progress and get insights
-      </Typography>
+    <m.div
+      initial="hidden"
+      animate={pageLoaded ? "visible" : "hidden"}
+      variants={containerVariants}
+    >
+      <Container maxWidth="xl" sx={{ py: 4 }}>
+        <m.div variants={itemVariants}>
+          <Typography variant="h4" fontWeight="bold" mb={1}>
+            Analytics Dashboard
+          </Typography>
+          <Typography variant="body1" color="text.secondary" mb={4}>
+            Track your fitness progress and get insights
+          </Typography>
+        </m.div>
 
-      <Paper
-        sx={{
-          borderRadius: 2,
-          overflow: "hidden",
-          boxShadow: "rgba(149, 157, 165, 0.2) 0px 8px 24px",
-          mb: 4,
-        }}
-      >
-        <Tabs
-          value={activeTab}
-          onChange={handleTabChange}
-          variant="scrollable"
-          scrollButtons="auto"
-          sx={{
-            bgcolor: "background.paper",
-            borderBottom: 1,
-            borderColor: "divider",
-            "& .MuiTab-root": {
-              py: 2,
-              minHeight: "auto",
-            },
-          }}
-        >
-          <Tab
-            label="Overview"
-            icon={<Icon icon="mdi:view-dashboard" width={20} height={20} />}
-            iconPosition="start"
-          />
-          <Tab
-            label="Body Metrics"
-            icon={<Icon icon="mdi:tape-measure" width={20} height={20} />}
-            iconPosition="start"
-          />
-          <Tab
-            label="Workout Stats"
-            icon={<Icon icon="mdi:dumbbell" width={20} height={20} />}
-            iconPosition="start"
-          />
-          <Tab
-            label="AI Analysis"
-            icon={<Icon icon="mdi:robot" width={20} height={20} />}
-            iconPosition="start"
-          />
-        </Tabs>
-      </Paper>
+        <m.div variants={tabVariants}>
+          <Paper
+            sx={{
+              borderRadius: 2,
+              overflow: "hidden",
+              mb: 4,
+              transition: "box-shadow 0.3s",
+            }}
+          >
+            <CustomTabs
+              value={activeTab}
+              onChange={handleTabChange}
+              scrollButtons="false"
+              variant="fullWidth"
+            >
+              {[
+                { label: "Overview", icon: "mdi:view-dashboard" },
+                { label: "Body Metrics", icon: "mdi:tape-measure" },
+                { label: "Workout Stats", icon: "mdi:dumbbell" },
+                { label: "AI Analysis", icon: "mdi:robot" },
+              ].map((tab, index) => (
+                <Tab
+                  key={index}
+                  label={tab.label}
+                  icon={
+                    <Icon
+                      icon={tab.icon}
+                      width={20}
+                      height={20}
+                      style={{
+                        transition: "all 0.3s",
+                        transform:
+                          activeTab === index ? "scale(1.2)" : "scale(1)",
+                      }}
+                    />
+                  }
+                  iconPosition="start"
+                  sx={{
+                    transition: "all 0.3s",
+                    transform:
+                      activeTab === index ? "translateY(-2px)" : "none",
+                  }}
+                />
+              ))}
+            </CustomTabs>
+          </Paper>
+        </m.div>
 
-      <Box sx={{ mt: 2 }}>
-        {activeTab === 0 && (
-          <AnalyticsOverview
-            metrics={metrics}
-            workoutStats={workoutStats}
-            aiAnalysis={aiAnalysis}
-            weightChartOptions={weightChartOptions}
-            weightChartSeries={weightChartSeries}
-            workoutCompletionOptions={workoutCompletionOptions}
-            workoutCompletionSeries={workoutCompletionSeries}
-            theme={theme}
-            setActiveTab={setActiveTab}
-          />
-        )}
-        {activeTab === 1 && (
-          <BodyMetrics
-            metrics={metrics}
-            newMetric={newMetric}
-            handleInputChange={handleInputChange}
-            handleSubmitMetrics={handleSubmitMetrics}
-            loading={loading}
-            measurementsChartOptions={measurementsChartOptions}
-            measurementsChartSeries={measurementsChartSeries}
-            theme={theme}
-          />
-        )}
-        {activeTab === 2 && (
-          <WorkoutStats
-            workoutStats={workoutStats}
-            workoutChartOptions={workoutChartOptions}
-            workoutChartSeries={workoutChartSeries}
-            theme={theme}
-          />
-        )}
-        {activeTab === 3 && (
-          <AIAnalysis
-            aiAnalysis={aiAnalysis}
-            theme={theme}
-            setActiveTab={setActiveTab}
-          />
-        )}
-      </Box>
-    </Container>
+        <Box sx={{ mt: 2 }}>
+          <Fade in={activeTab === 0} timeout={500}>
+            <Box sx={{ display: activeTab === 0 ? "block" : "none" }}>
+              <AnalyticsOverview
+                metrics={metrics}
+                workoutStats={workoutStats}
+                aiAnalysis={aiAnalysis}
+                weightChartOptions={weightChartOptions}
+                weightChartSeries={weightChartSeries}
+                workoutCompletionOptions={workoutCompletionOptions}
+                workoutCompletionSeries={workoutCompletionSeries}
+                theme={theme}
+                setActiveTab={setActiveTab}
+              />
+            </Box>
+          </Fade>
+          <Fade in={activeTab === 1} timeout={500}>
+            <Box sx={{ display: activeTab === 1 ? "block" : "none" }}>
+              <BodyMetrics
+                metrics={metrics}
+                newMetric={newMetric}
+                handleInputChange={handleInputChange}
+                handleSubmitMetrics={handleSubmitMetrics}
+                loading={loading}
+                measurementsChartOptions={measurementsChartOptions}
+                measurementsChartSeries={measurementsChartSeries}
+                theme={theme}
+              />
+            </Box>
+          </Fade>
+          <Fade in={activeTab === 2} timeout={500}>
+            <Box sx={{ display: activeTab === 2 ? "block" : "none" }}>
+              <WorkoutStats
+                workoutStats={workoutStats}
+                workoutChartOptions={workoutChartOptions}
+                workoutChartSeries={workoutChartSeries}
+                theme={theme}
+              />
+            </Box>
+          </Fade>
+          <Fade in={activeTab === 3} timeout={500}>
+            <Box sx={{ display: activeTab === 3 ? "block" : "none" }}>
+              <AIAnalysis
+                aiAnalysis={aiAnalysis}
+                theme={theme}
+                setActiveTab={setActiveTab}
+              />
+            </Box>
+          </Fade>
+        </Box>
+      </Container>
+    </m.div>
   );
 };
 

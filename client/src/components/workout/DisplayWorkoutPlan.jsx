@@ -8,16 +8,13 @@ import {
   Card,
   CardContent,
   Chip,
-  Container,
   Drawer,
   Grid,
   IconButton,
   LinearProgress,
   Stack,
-  Toolbar,
   Tooltip,
-  Typography,
-  useTheme,
+  Typography
 } from "@mui/material";
 import { AnimatePresence, m } from "framer-motion";
 import { useRef, useState } from "react";
@@ -160,7 +157,7 @@ const DisplayWorkoutPlan = ({ plan }) => {
                                   expandedWeek === week.weekNumber ? 0.3 : 0,
                                 delay:
                                   expandedWeek === week.weekNumber
-                                    ? dayIndex * 0.1
+                                    ? dayIndex * 0.15
                                     : 0,
                               }}
                               sx={{
@@ -169,7 +166,6 @@ const DisplayWorkoutPlan = ({ plan }) => {
                                 flexDirection: "column",
                                 position: "relative",
                                 overflow: "visible",
-                                transition: "all 0.3s ease-in-out",
                               }}
                             >
                               <Box

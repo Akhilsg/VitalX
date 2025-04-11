@@ -251,11 +251,11 @@ const WorkoutPlan = () => {
     switch (step) {
       case 0:
         if (!formData.age) newErrors.age = "Age is required";
-        if (formData.age < 13 || formData.age > 100)
-          newErrors.age = "Please enter a valid age";
+        if (formData.age < 10 || formData.age > 100)
+          newErrors.age = "Please enter a valid age between 10 and 100";
         if (!formData.weight) newErrors.weight = "Weight is required";
-        if (formData.weight < 30 || formData.weight > 300)
-          newErrors.weight = "Please enter a valid weight";
+        if (formData.weight < 30)
+          newErrors.weight = "Please enter a valid weight greater than 30";
         if (!formData.height) newErrors.height = "Height is required";
 
         break;
@@ -320,16 +320,17 @@ const WorkoutPlan = () => {
     return parseInt(ft) * 12 + parseInt(inches || 0);
   };
 
-  const handleInputChange = (field) => (event) => {
-    setFormData({
-      ...formData,
-      [field]: event.target.value,
-    });
+  const handleInputChange = (field) => (eventOrValue) => {
+    const value = eventOrValue?.target?.value ?? eventOrValue;
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
     if (errors[field]) {
-      setErrors({
-        ...errors,
+      setErrors((prev) => ({
+        ...prev,
         [field]: null,
-      });
+      }));
     }
   };
 

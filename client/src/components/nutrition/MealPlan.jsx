@@ -1,4 +1,3 @@
-// MealCard.jsx
 import { Icon } from "@iconify/react/dist/iconify.js";
 import {
   alpha,
@@ -13,6 +12,7 @@ import {
   ListItem,
   ListItemText,
   styled,
+  Tooltip,
   Typography,
   useTheme as useMuiTheme,
 } from "@mui/material";
@@ -23,6 +23,7 @@ import {
   useTransform,
 } from "framer-motion";
 import React, { useState, useRef, useEffect } from "react";
+import { RouterLink } from "../../common/router-link";
 
 // Enhanced keyframes animations
 const shimmer = keyframes`
@@ -344,7 +345,7 @@ export const MealCardWrapper = ({ meal, theme }) => {
           />
         </Box>
 
-        <Divider sx={{ mb: 2 }} />
+        <Divider sx={{ my: 2, borderStyle: "dashed" }} />
 
         <Box sx={{ mb: 3 }}>
           <Box
@@ -384,7 +385,7 @@ export const MealCardWrapper = ({ meal, theme }) => {
         </Box>
 
         <Box component={m.div} variants={itemVariants}>
-          <Typography
+          {/* <Typography
             variant="subtitle1"
             fontWeight="600"
             color="text.primary"
@@ -392,7 +393,7 @@ export const MealCardWrapper = ({ meal, theme }) => {
           >
             <Icon icon="mdi:food-variant" />
             Ingredients
-          </Typography>
+          </Typography> */}
 
           <List disablePadding sx={{ mb: 2 }}>
             <AnimatePresence>
@@ -406,20 +407,23 @@ export const MealCardWrapper = ({ meal, theme }) => {
                     exit={{ opacity: 0, x: 20 }}
                     transition={{ duration: 0.2 }}
                   >
-                    <IngredientItem>
+                    <IngredientItem
+                      secondaryAction={
+                        <Tooltip title="Buy">
+                          <IconButton
+                            LinkComponent={RouterLink}
+                            href={ingredient.purchaseLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <Icon icon="mdi:shopping-cart" />
+                          </IconButton>
+                        </Tooltip>
+                      }
+                    >
                       <ListItemText
-                        primary={`${ingredient.name} (${ingredient.amount})`}
-                        secondary={
-                          ingredient.purchaseLink ? (
-                            <a
-                              href={ingredient.purchaseLink}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              Buy
-                            </a>
-                          ) : null
-                        }
+                        primary={ingredient.name}
+                        secondary={ingredient.amount}
                         sx={{
                           "& .MuiListItemText-primary": {
                             fontWeight: 500,
